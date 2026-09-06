@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="Pufzi.Api/Pufzi.Api.csproj" />
+  <Project Path="Pufzi.Contracts/Pufzi.Contracts.csproj" />
+  <Project Path="Pufzi.Data/Pufzi.Data.csproj" />
+  <Project Path="Pufzi.Infrastructure/Pufzi.Infrastructure.csproj" />
+  <Project Path="Pufzi.Services/Pufzi.Services.csproj" />
+  <Project Path="Pufzi.Tests/Pufzi.Tests.csproj" />
+</Solution>
