@@ -13,13 +13,16 @@ public class BusinessService : IBusinessService
 {
     private readonly PufziDbContext _dbContext;
     private readonly IBlobStorageService _blobStorage;
+    private readonly IBusinessAccessService _businessAccess;
 
     public BusinessService(
         PufziDbContext dbContext,
-        IBlobStorageService blobStorage)
+        IBlobStorageService blobStorage,
+        IBusinessAccessService businessAccess)
     {
         _dbContext = dbContext;
         _blobStorage = blobStorage;
+        _businessAccess = businessAccess;
     }
 
     public async Task<BusinessResponse> CreateAsync(
@@ -77,9 +80,7 @@ public class BusinessService : IBusinessService
             Id = Guid.NewGuid(),
             BusinessId = business.Id,
             UserId = userId,
-
             Role = BusinessRole.Owner,
-
             IsActive = true,
             CreatedAt = now,
             UpdatedAt = now
@@ -124,7 +125,7 @@ public class BusinessService : IBusinessService
         CancellationToken cancellationToken = default)
     {
         var membership =
-            await GetMembershipAsync(
+            await _businessAccess.RequireMembershipAsync(
                 userId,
                 businessId,
                 cancellationToken);
@@ -145,7 +146,7 @@ public class BusinessService : IBusinessService
         CancellationToken cancellationToken = default)
     {
         var membership =
-            await RequireOwnerAsync(
+            await _businessAccess.RequireOwnerAsync(
                 userId,
                 businessId,
                 cancellationToken);
@@ -195,7 +196,7 @@ public class BusinessService : IBusinessService
         CancellationToken cancellationToken = default)
     {
         var membership =
-            await RequireOwnerAsync(
+            await _businessAccess.RequireOwnerAsync(
                 userId,
                 businessId,
                 cancellationToken);
@@ -242,7 +243,7 @@ public class BusinessService : IBusinessService
         CancellationToken cancellationToken = default)
     {
         var membership =
-            await RequireOwnerAsync(
+            await _businessAccess.RequireOwnerAsync(
                 userId,
                 businessId,
                 cancellationToken);
@@ -278,7 +279,7 @@ public class BusinessService : IBusinessService
         CancellationToken cancellationToken = default)
     {
         var membership =
-            await RequireOwnerAsync(
+            await _businessAccess.RequireOwnerAsync(
                 userId,
                 businessId,
                 cancellationToken);
@@ -297,11 +298,8 @@ public class BusinessService : IBusinessService
             contentType,
             cancellationToken);
 
-        business.CoverImageBlobName =
-            blobName;
-
-        business.UpdatedAt =
-            DateTime.UtcNow;
+        business.CoverImageBlobName = blobName;
+        business.UpdatedAt = DateTime.UtcNow;
 
         await _dbContext.SaveChangesAsync(
             cancellationToken);
@@ -328,7 +326,7 @@ public class BusinessService : IBusinessService
         CancellationToken cancellationToken = default)
     {
         var membership =
-            await RequireOwnerAsync(
+            await _businessAccess.RequireOwnerAsync(
                 userId,
                 businessId,
                 cancellationToken);
@@ -363,7 +361,7 @@ public class BusinessService : IBusinessService
         string extension,
         CancellationToken cancellationToken = default)
     {
-        await RequireOwnerAsync(
+        await _businessAccess.RequireOwnerAsync(
             userId,
             businessId,
             cancellationToken);
@@ -416,7 +414,7 @@ public class BusinessService : IBusinessService
         Guid imageId,
         CancellationToken cancellationToken = default)
     {
-        await RequireOwnerAsync(
+        await _businessAccess.RequireOwnerAsync(
             userId,
             businessId,
             cancellationToken);
@@ -446,50 +444,6 @@ public class BusinessService : IBusinessService
         await _blobStorage.DeletePublicAsync(
             blobName,
             cancellationToken);
-    }
-
-    private async Task<BusinessMembership> GetMembershipAsync(
-        Guid userId,
-        Guid businessId,
-        CancellationToken cancellationToken)
-    {
-        var membership =
-            await _dbContext.BusinessMemberships
-                .Include(x => x.Business)
-                .FirstOrDefaultAsync(
-                    x =>
-                        x.UserId == userId &&
-                        x.BusinessId == businessId &&
-                        x.IsActive,
-                    cancellationToken);
-
-        if (membership is null)
-        {
-            throw new UnauthorizedAccessException(
-                "Nu ai acces la acest salon.");
-        }
-
-        return membership;
-    }
-
-    private async Task<BusinessMembership> RequireOwnerAsync(
-        Guid userId,
-        Guid businessId,
-        CancellationToken cancellationToken)
-    {
-        var membership =
-            await GetMembershipAsync(
-                userId,
-                businessId,
-                cancellationToken);
-
-        if (membership.Role != BusinessRole.Owner)
-        {
-            throw new UnauthorizedAccessException(
-                "Doar proprietarul salonului poate efectua această acțiune.");
-        }
-
-        return membership;
     }
 
     private async Task<string> GenerateUniqueSlugAsync(

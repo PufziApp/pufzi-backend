@@ -37,7 +37,8 @@ public class BusinessServiceTests
                     It.IsAny<string>(),
                     It.IsAny<CancellationToken>()))
             .ReturnsAsync(
-                (Stream _,
+                (
+                    Stream _,
                     string blobName,
                     string _,
                     CancellationToken _) =>
@@ -59,6 +60,23 @@ public class BusinessServiceTests
             .Returns(Task.CompletedTask);
 
         return mock;
+    }
+
+    private static BusinessService CreateService(
+        PufziDbContext dbContext,
+        Mock<IBlobStorageService>? blobStorage = null)
+    {
+        blobStorage ??=
+            CreateBlobStorageMock();
+
+        var businessAccessService =
+            new BusinessAccessService(
+                dbContext);
+
+        return new BusinessService(
+            dbContext,
+            blobStorage.Object,
+            businessAccessService);
     }
 
     private static User CreateUser(
@@ -190,9 +208,9 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
+            CreateService(
                 dbContext,
-                blobStorage.Object);
+                blobStorage);
 
         var request =
             new CreateBusinessRequest
@@ -219,10 +237,13 @@ public class BusinessServiceTests
                 request);
 
         result.Should().NotBeNull();
+
         result.Name.Should()
             .Be("Pufzi Grooming");
+
         result.Slug.Should()
             .Be("pufzi-grooming");
+
         result.CurrentUserRole.Should()
             .Be("Owner");
 
@@ -267,9 +288,9 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
+            CreateService(
                 dbContext,
-                blobStorage.Object);
+                blobStorage);
 
         var request =
             new CreateBusinessRequest
@@ -342,9 +363,9 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
+            CreateService(
                 dbContext,
-                blobStorage.Object);
+                blobStorage);
 
         var request =
             new CreateBusinessRequest
@@ -370,13 +391,8 @@ public class BusinessServiceTests
         await using var dbContext =
             CreateDbContext();
 
-        var blobStorage =
-            CreateBlobStorageMock();
-
         var service =
-            new BusinessService(
-                dbContext,
-                blobStorage.Object);
+            CreateService(dbContext);
 
         var request =
             new CreateBusinessRequest
@@ -402,9 +418,6 @@ public class BusinessServiceTests
         await using var dbContext =
             CreateDbContext();
 
-        var blobStorage =
-            CreateBlobStorageMock();
-
         var user =
             CreateUser(
                 isActive: false);
@@ -414,9 +427,7 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
-                dbContext,
-                blobStorage.Object);
+            CreateService(dbContext);
 
         var request =
             new CreateBusinessRequest
@@ -442,9 +453,6 @@ public class BusinessServiceTests
         await using var dbContext =
             CreateDbContext();
 
-        var blobStorage =
-            CreateBlobStorageMock();
-
         var user =
             CreateUser();
 
@@ -453,9 +461,7 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
-                dbContext,
-                blobStorage.Object);
+            CreateService(dbContext);
 
         var request =
             new CreateBusinessRequest
@@ -480,9 +486,6 @@ public class BusinessServiceTests
         await using var dbContext =
             CreateDbContext();
 
-        var blobStorage =
-            CreateBlobStorageMock();
-
         var user =
             CreateUser();
 
@@ -499,9 +502,7 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
-                dbContext,
-                blobStorage.Object);
+            CreateService(dbContext);
 
         var request =
             new CreateBusinessRequest
@@ -524,9 +525,6 @@ public class BusinessServiceTests
         await using var dbContext =
             CreateDbContext();
 
-        var blobStorage =
-            CreateBlobStorageMock();
-
         var user =
             CreateUser();
 
@@ -535,9 +533,7 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
-                dbContext,
-                blobStorage.Object);
+            CreateService(dbContext);
 
         var request =
             new CreateBusinessRequest
@@ -559,9 +555,6 @@ public class BusinessServiceTests
     {
         await using var dbContext =
             CreateDbContext();
-
-        var blobStorage =
-            CreateBlobStorageMock();
 
         var user =
             CreateUser();
@@ -597,9 +590,7 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
-                dbContext,
-                blobStorage.Object);
+            CreateService(dbContext);
 
         var result =
             await service.GetMineAsync(
@@ -656,9 +647,9 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
+            CreateService(
                 dbContext,
-                blobStorage.Object);
+                blobStorage);
 
         var result =
             await service.GetMineAsync(
@@ -668,9 +659,10 @@ public class BusinessServiceTests
             result.Single();
 
         response.Images.Should()
-    .HaveCount(2);
+            .HaveCount(2);
 
-        var images = response.Images.ToList();
+        var images =
+            response.Images.ToList();
 
         images[0]
             .SortOrder.Should()
@@ -686,9 +678,6 @@ public class BusinessServiceTests
     {
         await using var dbContext =
             CreateDbContext();
-
-        var blobStorage =
-            CreateBlobStorageMock();
 
         var user =
             CreateUser();
@@ -708,9 +697,7 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
-                dbContext,
-                blobStorage.Object);
+            CreateService(dbContext);
 
         var result =
             await service.GetByIdAsync(
@@ -730,13 +717,8 @@ public class BusinessServiceTests
         await using var dbContext =
             CreateDbContext();
 
-        var blobStorage =
-            CreateBlobStorageMock();
-
         var service =
-            new BusinessService(
-                dbContext,
-                blobStorage.Object);
+            CreateService(dbContext);
 
         var action =
             async () =>
@@ -756,9 +738,6 @@ public class BusinessServiceTests
         await using var dbContext =
             CreateDbContext();
 
-        var blobStorage =
-            CreateBlobStorageMock();
-
         var user =
             CreateUser();
 
@@ -777,9 +756,7 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
-                dbContext,
-                blobStorage.Object);
+            CreateService(dbContext);
 
         var request =
             new UpdateBusinessRequest
@@ -827,9 +804,6 @@ public class BusinessServiceTests
         await using var dbContext =
             CreateDbContext();
 
-        var blobStorage =
-            CreateBlobStorageMock();
-
         var user =
             CreateUser();
 
@@ -853,9 +827,7 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
-                dbContext,
-                blobStorage.Object);
+            CreateService(dbContext);
 
         var request =
             new UpdateBusinessRequest
@@ -888,9 +860,6 @@ public class BusinessServiceTests
         await using var dbContext =
             CreateDbContext();
 
-        var blobStorage =
-            CreateBlobStorageMock();
-
         var user =
             CreateUser();
 
@@ -908,9 +877,7 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
-                dbContext,
-                blobStorage.Object);
+            CreateService(dbContext);
 
         var request =
             new UpdateBusinessRequest
@@ -940,9 +907,6 @@ public class BusinessServiceTests
         await using var dbContext =
             CreateDbContext();
 
-        var blobStorage =
-            CreateBlobStorageMock();
-
         var user =
             CreateUser();
 
@@ -961,9 +925,7 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
-                dbContext,
-                blobStorage.Object);
+            CreateService(dbContext);
 
         var request =
             new UpdateBusinessRequest
@@ -1010,9 +972,9 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
+            CreateService(
                 dbContext,
-                blobStorage.Object);
+                blobStorage);
 
         await using var stream =
             new MemoryStream(
@@ -1087,9 +1049,9 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
+            CreateService(
                 dbContext,
-                blobStorage.Object);
+                blobStorage);
 
         await using var stream =
             new MemoryStream(
@@ -1139,9 +1101,9 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
+            CreateService(
                 dbContext,
-                blobStorage.Object);
+                blobStorage);
 
         await service.DeleteLogoAsync(
             user.Id,
@@ -1184,9 +1146,9 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
+            CreateService(
                 dbContext,
-                blobStorage.Object);
+                blobStorage);
 
         await service.DeleteLogoAsync(
             user.Id,
@@ -1226,9 +1188,9 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
+            CreateService(
                 dbContext,
-                blobStorage.Object);
+                blobStorage);
 
         await using var stream =
             new MemoryStream(
@@ -1286,9 +1248,9 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
+            CreateService(
                 dbContext,
-                blobStorage.Object);
+                blobStorage);
 
         await using var stream =
             new MemoryStream(
@@ -1338,9 +1300,9 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
+            CreateService(
                 dbContext,
-                blobStorage.Object);
+                blobStorage);
 
         await service.DeleteCoverAsync(
             user.Id,
@@ -1383,9 +1345,9 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
+            CreateService(
                 dbContext,
-                blobStorage.Object);
+                blobStorage);
 
         await service.DeleteCoverAsync(
             user.Id,
@@ -1425,9 +1387,9 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
+            CreateService(
                 dbContext,
-                blobStorage.Object);
+                blobStorage);
 
         await using var stream =
             new MemoryStream(
@@ -1503,9 +1465,9 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
+            CreateService(
                 dbContext,
-                blobStorage.Object);
+                blobStorage);
 
         await using var stream =
             new MemoryStream(
@@ -1562,9 +1524,9 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
+            CreateService(
                 dbContext,
-                blobStorage.Object);
+                blobStorage);
 
         await service.DeleteImageAsync(
             user.Id,
@@ -1593,9 +1555,6 @@ public class BusinessServiceTests
         await using var dbContext =
             CreateDbContext();
 
-        var blobStorage =
-            CreateBlobStorageMock();
-
         var user =
             CreateUser();
 
@@ -1613,9 +1572,7 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
-                dbContext,
-                blobStorage.Object);
+            CreateService(dbContext);
 
         var action =
             async () =>
@@ -1635,9 +1592,6 @@ public class BusinessServiceTests
     {
         await using var dbContext =
             CreateDbContext();
-
-        var blobStorage =
-            CreateBlobStorageMock();
 
         var user =
             CreateUser();
@@ -1677,9 +1631,7 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
-                dbContext,
-                blobStorage.Object);
+            CreateService(dbContext);
 
         var action =
             async () =>
@@ -1722,9 +1674,9 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
+            CreateService(
                 dbContext,
-                blobStorage.Object);
+                blobStorage);
 
         await using var stream =
             new MemoryStream([1]);
@@ -1785,9 +1737,9 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
+            CreateService(
                 dbContext,
-                blobStorage.Object);
+                blobStorage);
 
         var result =
             await service.GetByIdAsync(
@@ -1807,9 +1759,6 @@ public class BusinessServiceTests
         await using var dbContext =
             CreateDbContext();
 
-        var blobStorage =
-            CreateBlobStorageMock();
-
         var user =
             CreateUser();
 
@@ -1827,9 +1776,7 @@ public class BusinessServiceTests
         await dbContext.SaveChangesAsync();
 
         var service =
-            new BusinessService(
-                dbContext,
-                blobStorage.Object);
+            CreateService(dbContext);
 
         var result =
             await service.GetByIdAsync(

@@ -29,6 +29,15 @@ public class PufziDbContext : DbContext
     public DbSet<BusinessImage> BusinessImages =>
         Set<BusinessImage>();
 
+    public DbSet<AnimalSpecies> AnimalSpecies => Set<AnimalSpecies>();
+
+    public DbSet<Service> Services => Set<Service>();
+
+    public DbSet<ServiceOption> ServiceOptions => Set<ServiceOption>();
+
+    public DbSet<ServicePriceVariant> ServicePriceVariants =>
+        Set<ServicePriceVariant>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
