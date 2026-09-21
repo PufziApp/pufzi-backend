@@ -30,13 +30,13 @@ public class AuthController : ControllerBase
     }
 
     [AllowAnonymous]
-    [HttpGet("confirm-email")]
+    [HttpPost("confirm-email")]
     public async Task<IActionResult> ConfirmEmail(
-        [FromQuery] string token,
-        CancellationToken cancellationToken)
+    [FromBody] ConfirmEmailRequest request,
+    CancellationToken cancellationToken)
     {
         await _authService.ConfirmEmailAsync(
-            token,
+            request.Token,
             cancellationToken);
 
         return Ok(new
@@ -115,5 +115,19 @@ public class AuthController : ControllerBase
         {
             message = "Parola a fost schimbată cu succes."
         });
+    }
+
+    [AllowAnonymous]
+    [HttpPost("google")]
+    public async Task<IActionResult> GoogleLogin(
+    [FromBody] GoogleLoginRequest request,
+    CancellationToken cancellationToken)
+    {
+        var response =
+            await _authService.GoogleLoginAsync(
+                request,
+                cancellationToken);
+
+        return Ok(response);
     }
 }

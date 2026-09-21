@@ -81,6 +81,10 @@ builder.Services.Configure<JwtOptions>(
     builder.Configuration.GetSection(
         JwtOptions.SectionName));
 
+builder.Services.Configure<GoogleAuthOptions>(
+    builder.Configuration.GetSection(
+        GoogleAuthOptions.SectionName));
+
 var jwtOptions = builder.Configuration
     .GetSection(JwtOptions.SectionName)
     .Get<JwtOptions>()
@@ -102,6 +106,10 @@ builder.Services.AddScoped<
 builder.Services.AddScoped<
     IAuthService,
     AuthService>();
+
+builder.Services.AddScoped<
+    IGoogleAuthService,
+    GoogleAuthService>();
 
 builder.Services
     .AddAuthentication(

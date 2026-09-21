@@ -19,6 +19,7 @@ public class AuthService : IAuthService
     private readonly IJwtService _jwtService;
     private readonly IEmailService _emailService;
     private readonly IConfiguration _configuration;
+    private readonly IGoogleAuthService _googleAuthService;
 
     public AuthService(
         PufziDbContext dbContext,
@@ -26,7 +27,8 @@ public class AuthService : IAuthService
         ISecureTokenGenerator tokenGenerator,
         IJwtService jwtService,
         IEmailService emailService,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IGoogleAuthService googleAuthService)
     {
         _dbContext = dbContext;
         _passwordHasher = passwordHasher;
@@ -34,6 +36,7 @@ public class AuthService : IAuthService
         _jwtService = jwtService;
         _emailService = emailService;
         _configuration = configuration;
+        _googleAuthService = googleAuthService;
     }
 
     public async Task<RegisterResponse> RegisterAsync(
@@ -109,7 +112,7 @@ public class AuthService : IAuthService
         var frontendUrl = GetFrontendUrl();
 
         var confirmationUrl =
-            $"{frontendUrl}/confirm-email?token=" +
+            $"{frontendUrl}/confirm-email/" +
             Uri.EscapeDataString(confirmationToken);
 
         var htmlContent =
@@ -212,6 +215,110 @@ public class AuthService : IAuthService
             throw new UnauthorizedAccessException(
                 "Adresa de email nu a fost confirmată.");
         }
+
+        return await CreateAuthResponseAsync(
+            user,
+            cancellationToken);
+    }
+
+    public async Task<AuthResponse> GoogleLoginAsync(
+    GoogleLoginRequest request,
+    CancellationToken cancellationToken = default)
+    {
+        var googleUser =
+            await _googleAuthService.ValidateIdTokenAsync(
+                request.IdToken,
+                cancellationToken);
+
+        var externalLogin =
+            await _dbContext.ExternalLogins
+                .Include(x => x.User)
+                .FirstOrDefaultAsync(
+                    x =>
+                        x.Provider == ExternalLoginProvider.Google &&
+                        x.ProviderUserId == googleUser.Subject,
+                    cancellationToken);
+
+        if (externalLogin is not null)
+        {
+            if (!externalLogin.User.IsActive)
+            {
+                throw new UnauthorizedAccessException(
+                    "Contul este dezactivat.");
+            }
+
+            return await CreateAuthResponseAsync(
+                externalLogin.User,
+                cancellationToken);
+        }
+
+        var normalizedEmail =
+            googleUser.Email.Trim().ToLowerInvariant();
+
+        var user =
+            await _dbContext.Users
+                .FirstOrDefaultAsync(
+                    x => x.NormalizedEmail == normalizedEmail,
+                    cancellationToken);
+
+        var now = DateTime.UtcNow;
+
+        if (user is null)
+        {
+            user = new User
+            {
+                Id = Guid.NewGuid(),
+
+                FirstName = googleUser.FirstName.Trim(),
+                LastName = googleUser.LastName.Trim(),
+
+                Email = googleUser.Email.Trim(),
+                NormalizedEmail = normalizedEmail,
+
+                PasswordHash = null,
+
+                PlatformRole = PlatformRole.User,
+
+                EmailConfirmed = true,
+                IsActive = true,
+
+                CreatedAt = now,
+                UpdatedAt = now
+            };
+
+            _dbContext.Users.Add(user);
+        }
+        else
+        {
+            if (!user.IsActive)
+            {
+                throw new UnauthorizedAccessException(
+                    "Contul este dezactivat.");
+            }
+
+            if (!user.EmailConfirmed)
+            {
+                user.EmailConfirmed = true;
+                user.UpdatedAt = now;
+            }
+        }
+
+        var googleLogin = new ExternalLogin
+        {
+            Id = Guid.NewGuid(),
+
+            UserId = user.Id,
+
+            Provider = ExternalLoginProvider.Google,
+            ProviderUserId = googleUser.Subject,
+
+            CreatedAt = now
+        };
+
+        _dbContext.ExternalLogins.Add(googleLogin);
+
+        await _dbContext.SaveChangesAsync(
+            cancellationToken);
 
         return await CreateAuthResponseAsync(
             user,

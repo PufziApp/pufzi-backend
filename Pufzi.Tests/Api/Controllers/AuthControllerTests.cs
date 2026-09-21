@@ -62,9 +62,14 @@ public class AuthControllerTests
         var cancellationToken =
             CancellationToken.None;
 
+        var request = new ConfirmEmailRequest
+        {
+            Token = "confirmation-token"
+        };
+
         var result =
             await _controller.ConfirmEmail(
-                token,
+                request,
                 cancellationToken);
 
         var okResult =

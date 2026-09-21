@@ -82,12 +82,13 @@ public class AuthServiceTests
     }
 
     private static AuthService CreateService(
-        PufziDbContext dbContext,
-        Mock<IPasswordHasher>? passwordHasher = null,
-        Mock<ISecureTokenGenerator>? tokenGenerator = null,
-        Mock<IJwtService>? jwtService = null,
-        Mock<IEmailService>? emailService = null,
-        IConfiguration? configuration = null)
+    PufziDbContext dbContext,
+    Mock<IPasswordHasher>? passwordHasher = null,
+    Mock<ISecureTokenGenerator>? tokenGenerator = null,
+    Mock<IJwtService>? jwtService = null,
+    Mock<IEmailService>? emailService = null,
+    IConfiguration? configuration = null,
+    Mock<IGoogleAuthService>? googleAuthService = null)
     {
         passwordHasher ??=
             new Mock<IPasswordHasher>();
@@ -101,6 +102,9 @@ public class AuthServiceTests
         emailService ??=
             new Mock<IEmailService>();
 
+        googleAuthService ??=
+            new Mock<IGoogleAuthService>();
+
         configuration ??=
             CreateConfiguration();
 
@@ -110,7 +114,8 @@ public class AuthServiceTests
             tokenGenerator.Object,
             jwtService.Object,
             emailService.Object,
-            configuration);
+            configuration,
+            googleAuthService.Object);
     }
 
     // =========================================================

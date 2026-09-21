@@ -32,4 +32,8 @@ public interface IAuthService
     Task ResetPasswordAsync(
         ResetPasswordRequest request,
         CancellationToken cancellationToken = default);
+
+    Task<AuthResponse> GoogleLoginAsync(
+        GoogleLoginRequest request,
+        CancellationToken cancellationToken = default);
 }

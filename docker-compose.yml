@@ -49,6 +49,10 @@ services:
       Jwt__AccessTokenExpirationMinutes: 15
       Jwt__RefreshTokenExpirationDays: 30
 
+      GoogleAuth__WebClientId: ${GOOGLE_WEB_CLIENT_ID}
+      GoogleAuth__AndroidClientId: ${GOOGLE_ANDROID_CLIENT_ID}
+      GoogleAuth__IosClientId: ${GOOGLE_IOS_CLIENT_ID}
+
       Brevo__ApiKey: ${BREVO_API_KEY}
       Brevo__SenderEmail: ${BREVO_SENDER_EMAIL}
       Brevo__SenderName: ${BREVO_SENDER_NAME}
