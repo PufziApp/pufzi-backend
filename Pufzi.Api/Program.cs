@@ -7,8 +7,10 @@ using Pufzi.Data.Database;
 using Pufzi.Infrastructure.Authentication;
 using Pufzi.Infrastructure.Email;
 using Pufzi.Infrastructure.Storage;
+using Pufzi.Services.AnimalSpecies;
 using Pufzi.Services.Auth;
 using Pufzi.Services.Businesses;
+using Pufzi.Services.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
@@ -168,6 +170,18 @@ builder.Services.AddSingleton<
 builder.Services.AddScoped<
     IBusinessService,
     BusinessService>();
+
+builder.Services.AddScoped<
+    IBusinessAccessService,
+    BusinessAccessService>();
+
+builder.Services.AddScoped<
+    IServiceService,
+    ServiceService>();
+
+builder.Services.AddScoped<
+    IAnimalSpeciesService,
+    AnimalSpeciesService>();
 
 builder.Services.AddAuthorization();
 

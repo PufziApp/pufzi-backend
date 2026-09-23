@@ -43,4 +43,5 @@ public class Business
     public ICollection<BusinessInvitation> Invitations { get; set; } = [];
 
     public ICollection<BusinessImage> Images { get; set; } = [];
+    public ICollection<Service> Services { get; set; } = [];
 }
