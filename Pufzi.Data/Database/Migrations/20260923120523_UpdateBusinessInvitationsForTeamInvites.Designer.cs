@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Pufzi.Data.Database;
@@ -11,9 +12,11 @@ using Pufzi.Data.Database;
 namespace Pufzi.Data.Database.Migrations
 {
     [DbContext(typeof(PufziDbContext))]
-    partial class PufziDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260923120523_UpdateBusinessInvitationsForTeamInvites")]
+    partial class UpdateBusinessInvitationsForTeamInvites
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

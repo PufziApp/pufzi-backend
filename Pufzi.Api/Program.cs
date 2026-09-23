@@ -5,12 +5,15 @@ using Microsoft.OpenApi;
 using Pufzi.Api.Middleware;
 using Pufzi.Data.Database;
 using Pufzi.Infrastructure.Authentication;
+using Pufzi.Infrastructure.Configuration;
 using Pufzi.Infrastructure.Email;
+using Pufzi.Infrastructure.Security;
 using Pufzi.Infrastructure.Storage;
 using Pufzi.Services.AnimalSpecies;
 using Pufzi.Services.Auth;
 using Pufzi.Services.Businesses;
 using Pufzi.Services.Services;
+using Pufzi.Services.Team;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
@@ -87,6 +90,10 @@ builder.Services.Configure<GoogleAuthOptions>(
     builder.Configuration.GetSection(
         GoogleAuthOptions.SectionName));
 
+builder.Services.Configure<FrontendOptions>(
+    builder.Configuration.GetSection(
+        FrontendOptions.SectionName));
+
 var jwtOptions = builder.Configuration
     .GetSection(JwtOptions.SectionName)
     .Get<JwtOptions>()
@@ -112,6 +119,10 @@ builder.Services.AddScoped<
 builder.Services.AddScoped<
     IGoogleAuthService,
     GoogleAuthService>();
+
+builder.Services.AddSingleton<
+    ISecureTokenService, 
+    SecureTokenService>();
 
 builder.Services
     .AddAuthentication(
@@ -182,6 +193,14 @@ builder.Services.AddScoped<
 builder.Services.AddScoped<
     IAnimalSpeciesService,
     AnimalSpeciesService>();
+
+builder.Services.AddScoped<
+    ITeamInvitationService, 
+    TeamInvitationService>();
+
+builder.Services.AddScoped<
+    ITeamService,
+    TeamService>();
 
 builder.Services.AddAuthorization();
 

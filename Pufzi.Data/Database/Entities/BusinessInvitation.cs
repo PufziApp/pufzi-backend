@@ -22,6 +22,8 @@ public class BusinessInvitation
 
     public DateTime? AcceptedAt { get; set; }
 
+    public DateTime? RevokedAt { get; set; }
+
     public Business Business { get; set; } = null!;
 
     public User InvitedByUser { get; set; } = null!;

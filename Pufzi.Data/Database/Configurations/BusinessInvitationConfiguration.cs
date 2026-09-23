@@ -23,7 +23,7 @@ public class BusinessInvitationConfiguration
             .IsRequired();
 
         builder.Property(x => x.TokenHash)
-            .HasMaxLength(500)
+            .HasMaxLength(64)
             .IsRequired();
 
         builder.Property(x => x.ExpiresAt)
