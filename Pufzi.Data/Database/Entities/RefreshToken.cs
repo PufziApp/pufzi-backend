@@ -16,5 +16,7 @@ public class RefreshToken
 
     public string? ReplacedByTokenHash { get; set; }
 
+    public bool RememberMe { get; set; }
+
     public User User { get; set; } = null!;
 }

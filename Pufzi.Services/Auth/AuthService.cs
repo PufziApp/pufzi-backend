@@ -109,11 +109,14 @@ public class AuthService : IAuthService
         await _dbContext.SaveChangesAsync(
             cancellationToken);
 
-        var frontendUrl = GetFrontendUrl();
+        var apiUrl =
+            _configuration["Api:PublicUrl"]
+            ?? throw new InvalidOperationException(
+                "API public URL is not configured.");
 
         var confirmationUrl =
-            $"{frontendUrl}/confirm-email/" +
-            Uri.EscapeDataString(confirmationToken);
+            $"{apiUrl.TrimEnd('/')}/api/auth/confirm-email" +
+            $"?token={Uri.EscapeDataString(confirmationToken)}";
 
         var htmlContent =
             AuthEmailTemplates.EmailConfirmation(
@@ -218,12 +221,13 @@ public class AuthService : IAuthService
 
         return await CreateAuthResponseAsync(
             user,
+            request.RememberMe,
             cancellationToken);
     }
 
     public async Task<AuthResponse> GoogleLoginAsync(
-    GoogleLoginRequest request,
-    CancellationToken cancellationToken = default)
+        GoogleLoginRequest request,
+        CancellationToken cancellationToken = default)
     {
         var googleUser =
             await _googleAuthService.ValidateIdTokenAsync(
@@ -249,6 +253,7 @@ public class AuthService : IAuthService
 
             return await CreateAuthResponseAsync(
                 externalLogin.User,
+                rememberMe: true,
                 cancellationToken);
         }
 
@@ -322,6 +327,7 @@ public class AuthService : IAuthService
 
         return await CreateAuthResponseAsync(
             user,
+            rememberMe: true,
             cancellationToken);
     }
 
@@ -366,44 +372,71 @@ public class AuthService : IAuthService
 
         var now = DateTime.UtcNow;
 
+        var accessTokenExpiresAt =
+            now.AddMinutes(
+                GetAccessTokenExpirationMinutes());
+
+        var refreshTokenExpiresAt =
+            now.AddDays(
+                GetRefreshTokenExpirationDays());
+
         var newRefreshToken =
             _tokenGenerator.GenerateToken();
 
         var newRefreshTokenHash =
-            _tokenGenerator.HashToken(newRefreshToken);
+            _tokenGenerator.HashToken(
+                newRefreshToken);
 
         storedToken.RevokedAt = now;
+
         storedToken.ReplacedByTokenHash =
             newRefreshTokenHash;
 
         var newStoredToken = new RefreshToken
         {
             Id = Guid.NewGuid(),
-            UserId = storedToken.UserId,
-            TokenHash = newRefreshTokenHash,
+
+            UserId =
+                storedToken.UserId,
+
+            TokenHash =
+                newRefreshTokenHash,
+
             CreatedAt = now,
 
-            ExpiresAt = now.AddDays(
-                GetRefreshTokenExpirationDays())
+            ExpiresAt =
+                refreshTokenExpiresAt,
+
+            RememberMe =
+                storedToken.RememberMe
         };
 
         _dbContext.RefreshTokens.Add(
             newStoredToken);
 
         var accessToken =
-            GenerateAccessToken(storedToken.User);
+            GenerateAccessToken(
+                storedToken.User);
 
         await _dbContext.SaveChangesAsync(
             cancellationToken);
 
         return new AuthResponse
         {
-            AccessToken = accessToken,
-            RefreshToken = newRefreshToken,
+            AccessToken =
+                accessToken,
+
+            RefreshToken =
+                newRefreshToken,
 
             AccessTokenExpiresAt =
-                now.AddMinutes(
-                    GetAccessTokenExpirationMinutes())
+                accessTokenExpiresAt,
+
+            RefreshTokenExpiresAt =
+                refreshTokenExpiresAt,
+
+            RememberMe =
+                storedToken.RememberMe
         };
     }
 
@@ -469,7 +502,8 @@ public class AuthService : IAuthService
             Type = UserTokenType.PasswordReset,
 
             TokenHash =
-                _tokenGenerator.HashToken(resetToken),
+                _tokenGenerator.HashToken(
+                    resetToken),
 
             CreatedAt = now,
             ExpiresAt = now.AddHours(1)
@@ -481,7 +515,8 @@ public class AuthService : IAuthService
         await _dbContext.SaveChangesAsync(
             cancellationToken);
 
-        var frontendUrl = GetFrontendUrl();
+        var frontendUrl =
+            GetFrontendUrl();
 
         var resetUrl =
             $"{frontendUrl}/reset-password?token=" +
@@ -503,28 +538,32 @@ public class AuthService : IAuthService
         ResetPasswordRequest request,
         CancellationToken cancellationToken = default)
     {
-        if (request.Password != request.ConfirmPassword)
+        if (request.Password !=
+            request.ConfirmPassword)
         {
             throw new InvalidOperationException(
                 "Parolele nu coincid.");
         }
 
-        if (string.IsNullOrWhiteSpace(request.Token))
+        if (string.IsNullOrWhiteSpace(
+                request.Token))
         {
             throw new InvalidOperationException(
                 "Tokenul este invalid.");
         }
 
         var tokenHash =
-            _tokenGenerator.HashToken(request.Token);
+            _tokenGenerator.HashToken(
+                request.Token);
 
-        var userToken = await _dbContext.UserTokens
-            .Include(x => x.User)
-            .FirstOrDefaultAsync(
-                x =>
-                    x.TokenHash == tokenHash &&
-                    x.Type == UserTokenType.PasswordReset,
-                cancellationToken);
+        var userToken =
+            await _dbContext.UserTokens
+                .Include(x => x.User)
+                .FirstOrDefaultAsync(
+                    x =>
+                        x.TokenHash == tokenHash &&
+                        x.Type == UserTokenType.PasswordReset,
+                    cancellationToken);
 
         if (userToken is null ||
             userToken.UsedAt.HasValue ||
@@ -537,7 +576,8 @@ public class AuthService : IAuthService
         var now = DateTime.UtcNow;
 
         userToken.User.PasswordHash =
-            _passwordHasher.Hash(request.Password);
+            _passwordHasher.Hash(
+                request.Password);
 
         userToken.User.UpdatedAt = now;
         userToken.UsedAt = now;
@@ -547,12 +587,14 @@ public class AuthService : IAuthService
                 .Where(x =>
                     x.UserId == userToken.UserId &&
                     x.RevokedAt == null)
-                .ToListAsync(cancellationToken);
+                .ToListAsync(
+                    cancellationToken);
 
         foreach (var activeRefreshToken
                  in activeRefreshTokens)
         {
-            activeRefreshToken.RevokedAt = now;
+            activeRefreshToken.RevokedAt =
+                now;
         }
 
         await _dbContext.SaveChangesAsync(
@@ -561,9 +603,18 @@ public class AuthService : IAuthService
 
     private async Task<AuthResponse> CreateAuthResponseAsync(
         User user,
+        bool rememberMe,
         CancellationToken cancellationToken)
     {
         var now = DateTime.UtcNow;
+
+        var accessTokenExpiresAt =
+            now.AddMinutes(
+                GetAccessTokenExpirationMinutes());
+
+        var refreshTokenExpiresAt =
+            now.AddDays(
+                GetRefreshTokenExpirationDays());
 
         var accessToken =
             GenerateAccessToken(user);
@@ -571,19 +622,27 @@ public class AuthService : IAuthService
         var refreshToken =
             _tokenGenerator.GenerateToken();
 
-        var refreshTokenEntity = new RefreshToken
-        {
-            Id = Guid.NewGuid(),
-            UserId = user.Id,
+        var refreshTokenEntity =
+            new RefreshToken
+            {
+                Id = Guid.NewGuid(),
 
-            TokenHash =
-                _tokenGenerator.HashToken(refreshToken),
+                UserId =
+                    user.Id,
 
-            CreatedAt = now,
+                TokenHash =
+                    _tokenGenerator.HashToken(
+                        refreshToken),
 
-            ExpiresAt = now.AddDays(
-                GetRefreshTokenExpirationDays())
-        };
+                CreatedAt =
+                    now,
+
+                ExpiresAt =
+                    refreshTokenExpiresAt,
+
+                RememberMe =
+                    rememberMe
+            };
 
         _dbContext.RefreshTokens.Add(
             refreshTokenEntity);
@@ -593,12 +652,20 @@ public class AuthService : IAuthService
 
         return new AuthResponse
         {
-            AccessToken = accessToken,
-            RefreshToken = refreshToken,
+            AccessToken =
+                accessToken,
+
+            RefreshToken =
+                refreshToken,
 
             AccessTokenExpiresAt =
-                now.AddMinutes(
-                    GetAccessTokenExpirationMinutes())
+                accessTokenExpiresAt,
+
+            RefreshTokenExpiresAt =
+                refreshTokenExpiresAt,
+
+            RememberMe =
+                rememberMe
         };
     }
 
@@ -608,9 +675,14 @@ public class AuthService : IAuthService
         return _jwtService.GenerateAccessToken(
             new JwtUserData
             {
-                UserId = user.Id,
-                Email = user.Email,
-                EmailConfirmed = user.EmailConfirmed,
+                UserId =
+                    user.Id,
+
+                Email =
+                    user.Email,
+
+                EmailConfirmed =
+                    user.EmailConfirmed,
 
                 PlatformRole =
                     user.PlatformRole.ToString()
@@ -619,7 +691,8 @@ public class AuthService : IAuthService
 
     private string GetFrontendUrl()
     {
-        return _configuration["Frontend:WebUrl"]
+        return _configuration[
+                "Frontend:WebUrl"]
             ?? throw new InvalidOperationException(
                 "Frontend URL is not configured.");
     }
