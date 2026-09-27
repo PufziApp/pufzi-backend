@@ -1,4 +1,4 @@
-﻿using Pufzi.Contracts.Responses.Services;
+﻿using Pufzi.Contracts.Responses.AnimalSpecies;
 
 namespace Pufzi.Services.AnimalSpecies;
 

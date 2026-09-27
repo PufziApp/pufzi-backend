@@ -1,6 +1,6 @@
 ﻿namespace Pufzi.Data.Database.Entities;
 
-public class Service
+public class ServicePackage
 {
     public Guid Id { get; set; }
 
@@ -10,7 +10,7 @@ public class Service
 
     public string? Description { get; set; }
 
-    public string? ImageBlobName { get; set; }
+    public string? Icon { get; set; }
 
     public bool IsActive { get; set; } = true;
 
@@ -22,5 +22,9 @@ public class Service
 
     public Business Business { get; set; } = null!;
 
-    public ICollection<ServiceOption> Options { get; set; } = [];
+    public ICollection<ServicePackageAnimalSpecies> AnimalSpecies { get; set; } = [];
+
+    public ICollection<ServicePackageEmployee> Employees { get; set; } = [];
+
+    public ICollection<ServicePackageItem> Items { get; set; } = [];
 }

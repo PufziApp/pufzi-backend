@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Pufzi.Contracts.Responses.Services;
+using Pufzi.Contracts.Responses.AnimalSpecies;
 using Pufzi.Data.Database;
 
 namespace Pufzi.Services.AnimalSpecies;

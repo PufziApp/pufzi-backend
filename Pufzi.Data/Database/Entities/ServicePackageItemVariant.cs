@@ -1,10 +1,10 @@
 ﻿namespace Pufzi.Data.Database.Entities;
 
-public class ServicePriceVariant
+public class ServicePackageItemVariant
 {
     public Guid Id { get; set; }
 
-    public Guid ServiceOptionId { get; set; }
+    public Guid ServicePackageItemOptionId { get; set; }
 
     public required string Name { get; set; }
 
@@ -22,5 +22,5 @@ public class ServicePriceVariant
 
     public int SortOrder { get; set; }
 
-    public ServiceOption ServiceOption { get; set; } = null!;
+    public ServicePackageItemOption ServicePackageItemOption { get; set; } = null!;
 }

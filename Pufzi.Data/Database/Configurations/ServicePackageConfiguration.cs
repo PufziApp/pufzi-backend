@@ -4,10 +4,14 @@ using Pufzi.Data.Database.Entities;
 
 namespace Pufzi.Data.Database.Configurations;
 
-public class ServiceConfiguration : IEntityTypeConfiguration<Service>
+public class ServicePackageConfiguration
+    : IEntityTypeConfiguration<ServicePackage>
 {
-    public void Configure(EntityTypeBuilder<Service> builder)
+    public void Configure(
+        EntityTypeBuilder<ServicePackage> builder)
     {
+        builder.ToTable("ServicePackages");
+
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Name)
@@ -17,8 +21,8 @@ public class ServiceConfiguration : IEntityTypeConfiguration<Service>
         builder.Property(x => x.Description)
             .HasMaxLength(2000);
 
-        builder.Property(x => x.ImageBlobName)
-            .HasMaxLength(500);
+        builder.Property(x => x.Icon)
+            .HasMaxLength(50);
 
         builder.Property(x => x.IsActive)
             .IsRequired();
@@ -32,18 +36,11 @@ public class ServiceConfiguration : IEntityTypeConfiguration<Service>
         builder.Property(x => x.UpdatedAt)
             .IsRequired();
 
-        builder.HasOne(x => x.Business)
-            .WithMany(x => x.Services)
-            .HasForeignKey(x => x.BusinessId)
-            .OnDelete(DeleteBehavior.Cascade);
-
         builder.HasIndex(x => x.BusinessId);
 
-        builder.HasIndex(x => new
-        {
-            x.BusinessId,
-            x.IsActive,
-            x.SortOrder
-        });
+        builder.HasOne(x => x.Business)
+            .WithMany(x => x.ServicePackages)
+            .HasForeignKey(x => x.BusinessId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

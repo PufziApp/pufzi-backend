@@ -218,10 +218,11 @@ public class TeamService : ITeamService
     }
 
     private TeamMemberResponse MapMember(
-        BusinessMembership membership)
+    BusinessMembership membership)
     {
         return new TeamMemberResponse
         {
+            BusinessMembershipId = membership.Id,
             UserId = membership.UserId,
             FirstName = membership.User.FirstName,
             LastName = membership.User.LastName,
@@ -245,10 +246,11 @@ public class TeamService : ITeamService
     }
 
     private TeamMemberDetailsResponse MapMemberDetails(
-        BusinessMembership membership)
+    BusinessMembership membership)
     {
         return new TeamMemberDetailsResponse
         {
+            BusinessMembershipId = membership.Id,
             UserId = membership.UserId,
             FirstName = membership.User.FirstName,
             LastName = membership.User.LastName,

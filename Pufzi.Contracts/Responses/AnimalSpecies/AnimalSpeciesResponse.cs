@@ -1,4 +1,4 @@
-﻿namespace Pufzi.Contracts.Responses.Services;
+﻿namespace Pufzi.Contracts.Responses.AnimalSpecies;
 
 /// <summary>
 /// Reprezintă o specie de animal disponibilă în sistem.
@@ -12,8 +12,8 @@ public class AnimalSpeciesResponse
 
     /// <summary>
     /// Codul unic al speciei.
-    /// Frontend-ul poate folosi acest cod pentru traducere și afișare.
-    /// De exemplu: dog, cat, rabbit.
+    /// Frontend-ul îl poate utiliza pentru traducere și afișare,
+    /// de exemplu: dog, cat sau rabbit.
     /// </summary>
     public required string Code { get; init; }
 }

@@ -19,6 +19,10 @@ public class BusinessesController : ControllerBase
         _businessService = businessService;
     }
 
+    /// <summary>
+    /// Creează un salon nou pentru utilizatorul autentificat.
+    /// Utilizatorul care creează salonul devine proprietarul acestuia.
+    /// </summary>
     [HttpPost]
     public async Task<IActionResult> Create(
         [FromBody] CreateBusinessRequest request,
@@ -33,6 +37,9 @@ public class BusinessesController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Returnează toate saloanele din care face parte utilizatorul autentificat.
+    /// </summary>
     [HttpGet("mine")]
     public async Task<IActionResult> GetMine(
         CancellationToken cancellationToken)
@@ -45,6 +52,10 @@ public class BusinessesController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Returnează informațiile unui salon specific.
+    /// Utilizatorul trebuie să fie membru activ al salonului.
+    /// </summary>
     [HttpGet("{businessId:guid}")]
     public async Task<IActionResult> GetById(
         Guid businessId,
@@ -59,6 +70,10 @@ public class BusinessesController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Actualizează informațiile unui salon.
+    /// Operația este disponibilă doar proprietarului salonului.
+    /// </summary>
     [HttpPut("{businessId:guid}")]
     public async Task<IActionResult> Update(
         Guid businessId,
@@ -75,6 +90,10 @@ public class BusinessesController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Încarcă sau înlocuiește logo-ul salonului.
+    /// Sunt acceptate imagini JPEG, PNG și WEBP de maximum 5 MB.
+    /// </summary>
     [HttpPost("{businessId:guid}/logo")]
     [RequestSizeLimit(5 * 1024 * 1024)]
     public async Task<IActionResult> UploadLogo(
@@ -99,6 +118,9 @@ public class BusinessesController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Șterge logo-ul curent al salonului.
+    /// </summary>
     [HttpDelete("{businessId:guid}/logo")]
     public async Task<IActionResult> DeleteLogo(
         Guid businessId,
@@ -112,6 +134,10 @@ public class BusinessesController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    /// Încarcă sau înlocuiește imaginea de copertă a salonului.
+    /// Sunt acceptate imagini JPEG, PNG și WEBP de maximum 10 MB.
+    /// </summary>
     [HttpPost("{businessId:guid}/cover")]
     [RequestSizeLimit(10 * 1024 * 1024)]
     public async Task<IActionResult> UploadCover(
@@ -136,6 +162,9 @@ public class BusinessesController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Șterge imaginea de copertă curentă a salonului.
+    /// </summary>
     [HttpDelete("{businessId:guid}/cover")]
     public async Task<IActionResult> DeleteCover(
         Guid businessId,
@@ -149,6 +178,10 @@ public class BusinessesController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    /// Adaugă o imagine nouă în galeria salonului.
+    /// Sunt acceptate imagini JPEG, PNG și WEBP de maximum 10 MB.
+    /// </summary>
     [HttpPost("{businessId:guid}/images")]
     [RequestSizeLimit(10 * 1024 * 1024)]
     public async Task<IActionResult> AddImage(
@@ -173,6 +206,9 @@ public class BusinessesController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Șterge o imagine specifică din galeria salonului.
+    /// </summary>
     [HttpDelete(
         "{businessId:guid}/images/{imageId:guid}")]
     public async Task<IActionResult> DeleteImage(
