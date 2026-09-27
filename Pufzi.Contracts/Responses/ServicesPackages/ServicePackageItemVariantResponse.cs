@@ -1,12 +1,13 @@
-﻿namespace Pufzi.Contracts.Responses.Services;
+﻿namespace Pufzi.Contracts.Responses.ServicePackages;
 
 /// <summary>
-/// Reprezintă o variantă de preț disponibilă pentru un serviciu.
+/// Reprezintă o variantă de preț și durată
+/// pentru un serviciu inclus într-un pachet.
 /// </summary>
-public class ServicePriceVariantResponse
+public class ServicePackageItemVariantResponse
 {
     /// <summary>
-    /// ID-ul unic al variantei de preț.
+    /// ID-ul unic al variantei.
     /// </summary>
     public Guid Id { get; init; }
 
@@ -36,17 +37,18 @@ public class ServicePriceVariantResponse
 
     /// <summary>
     /// Indică dacă prețul este un preț de pornire,
-    /// de exemplu „de la 150 lei”.
+    /// de exemplu „de la 150 RON”.
     /// </summary>
     public bool IsStartingPrice { get; init; }
 
     /// <summary>
-    /// Indică dacă prețul este disponibil la cerere.
+    /// Indică dacă prețul este disponibil doar la cerere.
     /// </summary>
     public bool IsPriceOnRequest { get; init; }
 
     /// <summary>
-    /// Durata specifică acestei variante, exprimată în minute.
+    /// Durata aproximativă a serviciului pentru această variantă,
+    /// exprimată în minute.
     /// Poate fi null.
     /// </summary>
     public int? DurationMinutes { get; init; }

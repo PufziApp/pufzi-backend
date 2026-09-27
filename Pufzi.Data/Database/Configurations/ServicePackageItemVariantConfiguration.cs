@@ -4,12 +4,14 @@ using Pufzi.Data.Database.Entities;
 
 namespace Pufzi.Data.Database.Configurations;
 
-public class ServicePriceVariantConfiguration
-    : IEntityTypeConfiguration<ServicePriceVariant>
+public class ServicePackageItemVariantConfiguration
+    : IEntityTypeConfiguration<ServicePackageItemVariant>
 {
     public void Configure(
-        EntityTypeBuilder<ServicePriceVariant> builder)
+        EntityTypeBuilder<ServicePackageItemVariant> builder)
     {
+        builder.ToTable("ServicePackageItemVariants");
+
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Name)
@@ -17,10 +19,10 @@ public class ServicePriceVariantConfiguration
             .IsRequired();
 
         builder.Property(x => x.MinWeightKg)
-            .HasPrecision(6, 2);
+            .HasPrecision(8, 2);
 
         builder.Property(x => x.MaxWeightKg)
-            .HasPrecision(6, 2);
+            .HasPrecision(8, 2);
 
         builder.Property(x => x.Price)
             .HasPrecision(10, 2);
@@ -34,11 +36,12 @@ public class ServicePriceVariantConfiguration
         builder.Property(x => x.SortOrder)
             .IsRequired();
 
-        builder.HasOne(x => x.ServiceOption)
-            .WithMany(x => x.PriceVariants)
-            .HasForeignKey(x => x.ServiceOptionId)
-            .OnDelete(DeleteBehavior.Cascade);
+        builder.HasIndex(x =>
+            x.ServicePackageItemOptionId);
 
-        builder.HasIndex(x => x.ServiceOptionId);
+        builder.HasOne(x => x.ServicePackageItemOption)
+            .WithMany(x => x.Variants)
+            .HasForeignKey(x => x.ServicePackageItemOptionId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

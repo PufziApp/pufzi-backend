@@ -31,12 +31,23 @@ public class PufziDbContext : DbContext
 
     public DbSet<AnimalSpecies> AnimalSpecies => Set<AnimalSpecies>();
 
-    public DbSet<Service> Services => Set<Service>();
+    public DbSet<ServicePackage> ServicePackages =>
+        Set<ServicePackage>();
 
-    public DbSet<ServiceOption> ServiceOptions => Set<ServiceOption>();
+    public DbSet<ServicePackageAnimalSpecies> ServicePackageAnimalSpecies =>
+        Set<ServicePackageAnimalSpecies>();
 
-    public DbSet<ServicePriceVariant> ServicePriceVariants =>
-        Set<ServicePriceVariant>();
+    public DbSet<ServicePackageEmployee> ServicePackageEmployees =>
+        Set<ServicePackageEmployee>();
+
+    public DbSet<ServicePackageItem> ServicePackageItems =>
+        Set<ServicePackageItem>();
+
+    public DbSet<ServicePackageItemOption> ServicePackageItemOptions =>
+        Set<ServicePackageItemOption>();
+
+    public DbSet<ServicePackageItemVariant> ServicePackageItemVariants =>
+        Set<ServicePackageItemVariant>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

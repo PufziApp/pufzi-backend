@@ -12,7 +12,7 @@ using Pufzi.Infrastructure.Storage;
 using Pufzi.Services.AnimalSpecies;
 using Pufzi.Services.Auth;
 using Pufzi.Services.Businesses;
-using Pufzi.Services.Services;
+using Pufzi.Services.ServicePackages;
 using Pufzi.Services.Team;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
@@ -187,8 +187,8 @@ builder.Services.AddScoped<
     BusinessAccessService>();
 
 builder.Services.AddScoped<
-    IServiceService,
-    ServiceService>();
+    IServicePackageService,
+    ServicePackageService>();
 
 builder.Services.AddScoped<
     IAnimalSpeciesService,

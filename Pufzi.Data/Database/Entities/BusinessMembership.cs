@@ -35,4 +35,6 @@ public class BusinessMembership
     public ICollection<EmployeeLeaveBalance> LeaveBalances { get; set; } = [];
 
     public ICollection<LeaveRequest> LeaveRequests { get; set; } = [];
+
+    public ICollection<ServicePackageEmployee> ServicePackages { get; set; } = [];
 }

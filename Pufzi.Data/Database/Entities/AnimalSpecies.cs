@@ -10,5 +10,4 @@ public class AnimalSpecies
 
     public int SortOrder { get; set; }
 
-    public ICollection<ServiceOption> ServiceOptions { get; set; } = [];
 }
