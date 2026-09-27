@@ -29,6 +29,13 @@ public class ExceptionHandlingMiddleware
                 HttpStatusCode.Unauthorized,
                 exception.Message);
         }
+        catch (KeyNotFoundException exception)
+        {
+            await WriteErrorResponseAsync(
+                context,
+                HttpStatusCode.NotFound,
+                exception.Message);
+        }
         catch (InvalidOperationException exception)
         {
             await WriteErrorResponseAsync(

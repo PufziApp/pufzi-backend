@@ -24,6 +24,14 @@ public class BusinessMembershipConfiguration
         builder.Property(x => x.Bio)
             .HasMaxLength(1000);
 
+        builder.Property(x => x.CoverImageBlobName)
+            .HasMaxLength(500);
+
+        builder.Property(x => x.IsActive)
+            .IsRequired();
+
+        builder.Property(x => x.RemovedAt);
+
         builder.Property(x => x.CreatedAt)
             .IsRequired();
 

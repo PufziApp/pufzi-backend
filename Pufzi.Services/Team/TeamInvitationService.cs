@@ -91,13 +91,14 @@ public class TeamInvitationService : ITeamInvitationService
         {
             var existingMembership = await _dbContext.BusinessMemberships
                 .AsNoTracking()
-                .AnyAsync(
+                .FirstOrDefaultAsync(
                     x =>
                         x.BusinessId == businessId &&
                         x.UserId == existingUser.Id,
                     cancellationToken);
 
-            if (existingMembership)
+            if (existingMembership is not null &&
+                existingMembership.RemovedAt is null)
             {
                 throw new InvalidOperationException(
                     "Această persoană este deja membră a echipei.");
@@ -244,14 +245,15 @@ public class TeamInvitationService : ITeamInvitationService
         }
 
         var existingMembership =
-            await _dbContext.BusinessMemberships
-                .FirstOrDefaultAsync(
-                    x =>
-                        x.BusinessId == invitation.BusinessId &&
-                        x.UserId == userId,
-                    cancellationToken);
+    await _dbContext.BusinessMemberships
+        .FirstOrDefaultAsync(
+            x =>
+                x.BusinessId == invitation.BusinessId &&
+                x.UserId == userId,
+            cancellationToken);
 
-        if (existingMembership is not null)
+        if (existingMembership is not null &&
+            existingMembership.RemovedAt is null)
         {
             throw new InvalidOperationException(
                 "Ești deja membru al acestei echipe.");
@@ -261,18 +263,28 @@ public class TeamInvitationService : ITeamInvitationService
             await _dbContext.Database.BeginTransactionAsync(
                 cancellationToken);
 
-        var membership = new BusinessMembership
+        if (existingMembership is not null)
         {
-            Id = Guid.NewGuid(),
-            BusinessId = invitation.BusinessId,
-            UserId = userId,
-            Role = invitation.Role,
-            IsActive = true,
-            CreatedAt = now,
-            UpdatedAt = now
-        };
+            existingMembership.Role = invitation.Role;
+            existingMembership.IsActive = true;
+            existingMembership.RemovedAt = null;
+            existingMembership.UpdatedAt = now;
+        }
+        else
+        {
+            var membership = new BusinessMembership
+            {
+                Id = Guid.NewGuid(),
+                BusinessId = invitation.BusinessId,
+                UserId = userId,
+                Role = invitation.Role,
+                IsActive = true,
+                CreatedAt = now,
+                UpdatedAt = now
+            };
 
-        _dbContext.BusinessMemberships.Add(membership);
+            _dbContext.BusinessMemberships.Add(membership);
+        }
 
         invitation.AcceptedAt = now;
 
