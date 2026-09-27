@@ -8,6 +8,12 @@ namespace Pufzi.Contracts.Responses.Team;
 public class TeamMemberResponse
 {
     /// <summary>
+    /// Identificatorul unic al apartenenței utilizatorului la salon.
+    /// Este utilizat pentru asignările specifice salonului.
+    /// </summary>
+    public Guid BusinessMembershipId { get; set; }
+
+    /// <summary>
     /// Identificatorul unic al utilizatorului.
     /// </summary>
     public Guid UserId { get; set; }

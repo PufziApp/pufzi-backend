@@ -250,11 +250,11 @@ public class ServicePackageService : IServicePackageService
     }
 
     public async Task<ServicePackageDetailsResponse> UpdateAsync(
-        Guid userId,
-        Guid businessId,
-        Guid packageId,
-        UpdateServicePackageRequest request,
-        CancellationToken cancellationToken = default)
+    Guid userId,
+    Guid businessId,
+    Guid packageId,
+    UpdateServicePackageRequest request,
+    CancellationToken cancellationToken = default)
     {
         await _businessAccess.RequireOwnerAsync(
             userId,
@@ -279,10 +279,20 @@ public class ServicePackageService : IServicePackageService
             request.AnimalSpeciesIds,
             request.Items);
 
-        var package = await GetPackageAsync(
-            businessId,
-            packageId,
-            cancellationToken);
+        var package = await _dbContext.ServicePackages
+            .FirstOrDefaultAsync(
+                x =>
+                    x.Id == packageId &&
+                    x.BusinessId == businessId,
+                cancellationToken);
+
+        if (package is null)
+        {
+            throw new KeyNotFoundException(
+                "Pachetul de servicii nu a fost găsit.");
+        }
+
+        var now = DateTime.UtcNow;
 
         package.Name = NormalizeRequiredText(
             request.Name,
@@ -294,30 +304,50 @@ public class ServicePackageService : IServicePackageService
         package.Icon =
             NormalizeOptionalText(request.Icon);
 
-        package.SortOrder = request.SortOrder;
+        package.SortOrder =
+            request.SortOrder;
 
-        package.UpdatedAt = DateTime.UtcNow;
+        package.UpdatedAt =
+            now;
 
-        _dbContext.ServicePackageAnimalSpecies.RemoveRange(
-            package.AnimalSpecies);
+        await using var transaction =
+            await _dbContext.Database.BeginTransactionAsync(
+                cancellationToken);
 
-        _dbContext.ServicePackageEmployees.RemoveRange(
-            package.Employees);
+        await _dbContext.ServicePackageItemVariants
+            .Where(x =>
+                x.ServicePackageItemOption.ServicePackageItem.ServicePackageId ==
+                packageId)
+            .ExecuteDeleteAsync(cancellationToken);
 
-        _dbContext.ServicePackageItems.RemoveRange(
-            package.Items);
+        await _dbContext.ServicePackageItemOptions
+            .Where(x =>
+                x.ServicePackageItem.ServicePackageId ==
+                packageId)
+            .ExecuteDeleteAsync(cancellationToken);
 
-        package.AnimalSpecies.Clear();
-        package.Employees.Clear();
-        package.Items.Clear();
+        await _dbContext.ServicePackageItems
+            .Where(x =>
+                x.ServicePackageId == packageId)
+            .ExecuteDeleteAsync(cancellationToken);
+
+        await _dbContext.ServicePackageEmployees
+            .Where(x =>
+                x.ServicePackageId == packageId)
+            .ExecuteDeleteAsync(cancellationToken);
+
+        await _dbContext.ServicePackageAnimalSpecies
+            .Where(x =>
+                x.ServicePackageId == packageId)
+            .ExecuteDeleteAsync(cancellationToken);
 
         foreach (var animalSpeciesId in
                  request.AnimalSpeciesIds.Distinct())
         {
-            package.AnimalSpecies.Add(
+            _dbContext.ServicePackageAnimalSpecies.Add(
                 new ServicePackageAnimalSpecies
                 {
-                    ServicePackageId = package.Id,
+                    ServicePackageId = packageId,
                     AnimalSpeciesId = animalSpeciesId
                 });
         }
@@ -325,28 +355,31 @@ public class ServicePackageService : IServicePackageService
         foreach (var membershipId in
                  request.EmployeeMembershipIds.Distinct())
         {
-            package.Employees.Add(
+            _dbContext.ServicePackageEmployees.Add(
                 new ServicePackageEmployee
                 {
-                    ServicePackageId = package.Id,
+                    ServicePackageId = packageId,
                     BusinessMembershipId = membershipId
                 });
         }
 
         foreach (var itemRequest in request.Items)
         {
-            package.Items.Add(
+            _dbContext.ServicePackageItems.Add(
                 CreateItem(
-                    package.Id,
+                    packageId,
                     itemRequest));
         }
 
         await _dbContext.SaveChangesAsync(
             cancellationToken);
 
+        await transaction.CommitAsync(
+            cancellationToken);
+
         var updatedPackage = await GetPackageAsync(
             businessId,
-            package.Id,
+            packageId,
             cancellationToken);
 
         return MapDetails(updatedPackage);
@@ -440,6 +473,33 @@ public class ServicePackageService : IServicePackageService
             .Include(x => x.Items)
                 .ThenInclude(x => x.Options)
                     .ThenInclude(x => x.AnimalSpecies)
+            .Include(x => x.Items)
+                .ThenInclude(x => x.Options)
+                    .ThenInclude(x => x.Variants)
+            .FirstOrDefaultAsync(
+                x =>
+                    x.Id == packageId &&
+                    x.BusinessId == businessId,
+                cancellationToken);
+
+        if (package is null)
+        {
+            throw new KeyNotFoundException(
+                "Pachetul de servicii nu a fost găsit.");
+        }
+
+        return package;
+    }
+
+    private async Task<ServicePackage> GetPackageForUpdateAsync(
+    Guid businessId,
+    Guid packageId,
+    CancellationToken cancellationToken)
+    {
+        var package = await _dbContext.ServicePackages
+            .AsSplitQuery()
+            .Include(x => x.AnimalSpecies)
+            .Include(x => x.Employees)
             .Include(x => x.Items)
                 .ThenInclude(x => x.Options)
                     .ThenInclude(x => x.Variants)
@@ -826,6 +886,7 @@ public class ServicePackageService : IServicePackageService
             StartingPrice = variants
                 .Where(x => x.Price.HasValue)
                 .Select(x => x.Price)
+                .DefaultIfEmpty(null)
                 .Min(),
 
             HasPriceOnRequest =
