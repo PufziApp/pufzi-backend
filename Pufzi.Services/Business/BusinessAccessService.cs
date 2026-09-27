@@ -16,9 +16,9 @@ public class BusinessAccessService : IBusinessAccessService
     }
 
     public async Task<BusinessMembership> RequireMembershipAsync(
-        Guid userId,
-        Guid businessId,
-        CancellationToken cancellationToken = default)
+    Guid userId,
+    Guid businessId,
+    CancellationToken cancellationToken = default)
     {
         var membership =
             await _dbContext.BusinessMemberships
@@ -27,7 +27,8 @@ public class BusinessAccessService : IBusinessAccessService
                     x =>
                         x.UserId == userId &&
                         x.BusinessId == businessId &&
-                        x.IsActive,
+                        x.IsActive &&
+                        x.RemovedAt == null,
                     cancellationToken);
 
         if (membership is null)

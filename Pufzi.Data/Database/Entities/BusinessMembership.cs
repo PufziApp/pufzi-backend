@@ -16,7 +16,11 @@ public class BusinessMembership
 
     public string? Bio { get; set; }
 
+    public string? CoverImageBlobName { get; set; }
+
     public bool IsActive { get; set; } = true;
+
+    public DateTime? RemovedAt { get; set; }
 
     public DateTime CreatedAt { get; set; }
 

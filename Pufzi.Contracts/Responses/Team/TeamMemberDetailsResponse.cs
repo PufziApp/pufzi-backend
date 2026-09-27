@@ -3,9 +3,9 @@
 namespace Pufzi.Contracts.Responses.Team;
 
 /// <summary>
-/// Reprezintă un membru al echipei unui salon.
+/// Reprezintă profilul detaliat al unui membru al echipei unui salon.
 /// </summary>
-public class TeamMemberResponse
+public class TeamMemberDetailsResponse
 {
     /// <summary>
     /// Identificatorul unic al utilizatorului.
@@ -40,8 +40,7 @@ public class TeamMemberResponse
     public string? ProfileImageUrl { get; set; }
 
     /// <summary>
-    /// URL-ul public al imaginii de copertă folosite
-    /// pentru profilul profesional al membrului în salon.
+    /// URL-ul public al imaginii de copertă profesionale.
     /// Este null dacă membrul nu are imagine de copertă.
     /// </summary>
     public string? CoverImageUrl { get; set; }
@@ -53,13 +52,11 @@ public class TeamMemberResponse
 
     /// <summary>
     /// Titlul profesional al membrului în cadrul salonului.
-    /// Este null dacă nu a fost completat.
     /// </summary>
     public string? JobTitle { get; set; }
 
     /// <summary>
-    /// Descrierea profesională a membrului.
-    /// Este null dacă nu a fost completată.
+    /// Descrierea profesională a membrului în cadrul salonului.
     /// </summary>
     public string? Bio { get; set; }
 
