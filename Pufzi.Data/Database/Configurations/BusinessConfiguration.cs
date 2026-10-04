@@ -41,6 +41,14 @@ public class BusinessConfiguration : IEntityTypeConfiguration<Business>
         builder.Property(x => x.PostalCode)
             .HasMaxLength(20);
 
+        builder.Property(x => x.CountryCode)
+            .HasMaxLength(2)
+            .IsRequired();
+
+        builder.Property(x => x.TimeZoneId)
+            .HasMaxLength(100)
+            .IsRequired();
+
         builder.Property(x => x.Latitude)
             .HasPrecision(9, 6);
 

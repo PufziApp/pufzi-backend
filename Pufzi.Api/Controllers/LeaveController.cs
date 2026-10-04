@@ -208,6 +208,29 @@ public class LeaveController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Revocă o cerere de concediu aprobată.
+    /// Pentru concediul anual, zilele utilizate sunt returnate în sold.
+    /// Operația este disponibilă doar proprietarului salonului.
+    /// </summary>
+    [HttpPost("requests/{requestId:guid}/revoke")]
+    public async Task<ActionResult<LeaveRequestResponse>> RevokeRequest(
+        Guid requestId,
+        [FromHeader(Name = "X-Business-Id")] Guid businessId,
+        [FromBody] ReviewLeaveRequest request,
+        CancellationToken cancellationToken)
+    {
+        var response =
+            await _leaveService.RevokeRequestAsync(
+                GetCurrentUserId(),
+                businessId,
+                requestId,
+                request,
+                cancellationToken);
+
+        return Ok(response);
+    }
+
     private Guid GetCurrentUserId()
     {
         var value =

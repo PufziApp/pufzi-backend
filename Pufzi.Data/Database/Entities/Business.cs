@@ -22,6 +22,10 @@ public class Business
 
     public string? PostalCode { get; set; }
 
+    public required string CountryCode { get; set; }
+
+    public required string TimeZoneId { get; set; }
+
     public decimal? Latitude { get; set; }
 
     public decimal? Longitude { get; set; }

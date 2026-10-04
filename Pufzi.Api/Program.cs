@@ -7,6 +7,7 @@ using Pufzi.Data.Database;
 using Pufzi.Infrastructure.Authentication;
 using Pufzi.Infrastructure.Configuration;
 using Pufzi.Infrastructure.Email;
+using Pufzi.Infrastructure.PublicHolidays;
 using Pufzi.Infrastructure.Security;
 using Pufzi.Infrastructure.Storage;
 using Pufzi.Services.AnimalSpecies;
@@ -211,6 +212,15 @@ builder.Services.AddScoped<
 builder.Services.AddScoped<
     ILeaveService,
     LeaveService>();
+
+builder.Services.AddMemoryCache();
+
+builder.Services.AddHttpClient<IPublicHolidayService, NagerPublicHolidayService>(
+    client =>
+    {
+        client.BaseAddress = new Uri("https://date.nager.at/");
+        client.Timeout = TimeSpan.FromSeconds(10);
+    });
 
 builder.Services.AddAuthorization();
 

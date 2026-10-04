@@ -34,4 +34,6 @@ public class LeaveRequest
     public BusinessMembership BusinessMembership { get; set; } = null!;
 
     public User? ReviewedByUser { get; set; }
+
+    public ICollection<LeaveRequestBalanceUsage> BalanceUsages { get; set; } = [];
 }

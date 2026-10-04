@@ -100,6 +100,94 @@ public class SchedulesController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Returnează excepțiile de program ale salonului pentru perioada solicitată.
+    /// Excepțiile reprezintă zile închise sau zile cu program special.
+    /// Operația este disponibilă tuturor membrilor activi ai salonului.
+    /// </summary>
+    [HttpGet("exceptions")]
+    public async Task<IActionResult> GetBusinessScheduleExceptions(
+        [FromHeader(Name = "X-Business-Id")] Guid businessId,
+        [FromQuery] BusinessScheduleExceptionFilterRequest request,
+        CancellationToken cancellationToken)
+    {
+        var response =
+            await _scheduleService.GetBusinessScheduleExceptionsAsync(
+                GetCurrentUserId(),
+                businessId,
+                request,
+                cancellationToken);
+
+        return Ok(response);
+    }
+
+    /// <summary>
+    /// Creează o excepție de program pentru salon.
+    /// Excepția poate reprezenta o zi complet închisă
+    /// sau o zi cu program special.
+    /// Operația poate fi efectuată doar de proprietarul salonului.
+    /// </summary>
+    [HttpPost("exceptions")]
+    public async Task<IActionResult> CreateBusinessScheduleException(
+        [FromHeader(Name = "X-Business-Id")] Guid businessId,
+        [FromBody] CreateBusinessScheduleExceptionRequest request,
+        CancellationToken cancellationToken)
+    {
+        var response =
+            await _scheduleService.CreateBusinessScheduleExceptionAsync(
+                GetCurrentUserId(),
+                businessId,
+                request,
+                cancellationToken);
+
+        return Ok(response);
+    }
+
+    /// <summary>
+    /// Modifică o excepție de program existentă.
+    /// Se poate modifica dacă salonul este închis,
+    /// programul special și motivul excepției.
+    /// Operația poate fi efectuată doar de proprietarul salonului.
+    /// </summary>
+    [HttpPut("exceptions/{exceptionId:guid}")]
+    public async Task<IActionResult> UpdateBusinessScheduleException(
+        Guid exceptionId,
+        [FromHeader(Name = "X-Business-Id")] Guid businessId,
+        [FromBody] UpdateBusinessScheduleExceptionRequest request,
+        CancellationToken cancellationToken)
+    {
+        var response =
+            await _scheduleService.UpdateBusinessScheduleExceptionAsync(
+                GetCurrentUserId(),
+                businessId,
+                exceptionId,
+                request,
+                cancellationToken);
+
+        return Ok(response);
+    }
+
+    /// <summary>
+    /// Șterge o excepție de program a salonului.
+    /// După ștergere, pentru data respectivă se aplică din nou
+    /// programul săptămânal normal al salonului.
+    /// Operația poate fi efectuată doar de proprietarul salonului.
+    /// </summary>
+    [HttpDelete("exceptions/{exceptionId:guid}")]
+    public async Task<IActionResult> DeleteBusinessScheduleException(
+        Guid exceptionId,
+        [FromHeader(Name = "X-Business-Id")] Guid businessId,
+        CancellationToken cancellationToken)
+    {
+        await _scheduleService.DeleteBusinessScheduleExceptionAsync(
+            GetCurrentUserId(),
+            businessId,
+            exceptionId,
+            cancellationToken);
+
+        return NoContent();
+    }
+
     private Guid GetCurrentUserId()
     {
         var userId =

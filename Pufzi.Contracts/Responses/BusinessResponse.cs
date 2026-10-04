@@ -22,6 +22,10 @@ public class BusinessResponse
 
     public string? PostalCode { get; init; }
 
+    public required string CountryCode { get; init; }
+
+    public required string TimeZoneId { get; init; }
+
     public decimal? Latitude { get; init; }
 
     public decimal? Longitude { get; init; }

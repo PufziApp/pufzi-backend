@@ -38,6 +38,14 @@ public class BusinessService : IBusinessService
                 "Numele salonului este obligatoriu.");
         }
 
+        var countryCode =
+            NormalizeCountryCode(
+                request.CountryCode);
+
+        var timeZoneId =
+            ValidateTimeZoneId(
+                request.TimeZoneId);
+
         var userExists = await _dbContext.Users
             .AnyAsync(
                 x => x.Id == userId && x.IsActive,
@@ -67,6 +75,8 @@ public class BusinessService : IBusinessService
             City = Clean(request.City),
             County = Clean(request.County),
             PostalCode = Clean(request.PostalCode),
+            CountryCode = countryCode,
+            TimeZoneId = timeZoneId,
             Latitude = request.Latitude,
             Longitude = request.Longitude,
             InstagramUrl = Clean(request.InstagramUrl),
@@ -161,6 +171,14 @@ public class BusinessService : IBusinessService
                 "Numele salonului este obligatoriu.");
         }
 
+        var countryCode =
+            NormalizeCountryCode(
+                request.CountryCode);
+
+        var timeZoneId =
+            ValidateTimeZoneId(
+                request.TimeZoneId);
+
         business.Name = name;
         business.Description = Clean(request.Description);
         business.PhoneNumber = Clean(request.PhoneNumber);
@@ -169,6 +187,8 @@ public class BusinessService : IBusinessService
         business.City = Clean(request.City);
         business.County = Clean(request.County);
         business.PostalCode = Clean(request.PostalCode);
+        business.CountryCode = countryCode;
+        business.TimeZoneId = timeZoneId;
         business.Latitude = request.Latitude;
         business.Longitude = request.Longitude;
         business.InstagramUrl = Clean(request.InstagramUrl);
@@ -506,6 +526,53 @@ public class BusinessService : IBusinessService
         return value.Trim();
     }
 
+    private static string NormalizeCountryCode(
+        string countryCode)
+    {
+        var normalized =
+            countryCode.Trim().ToUpperInvariant();
+
+        if (normalized.Length != 2 ||
+            !normalized.All(char.IsLetter))
+        {
+            throw new InvalidOperationException(
+                "Codul țării trebuie să fie un cod ISO format din două litere.");
+        }
+
+        return normalized;
+    }
+
+    private static string ValidateTimeZoneId(
+        string timeZoneId)
+    {
+        var normalized =
+            timeZoneId.Trim();
+
+        if (string.IsNullOrWhiteSpace(normalized))
+        {
+            throw new InvalidOperationException(
+                "Fusul orar este obligatoriu.");
+        }
+
+        try
+        {
+            _ = TimeZoneInfo.FindSystemTimeZoneById(
+                normalized);
+        }
+        catch (TimeZoneNotFoundException)
+        {
+            throw new InvalidOperationException(
+                "Fusul orar specificat nu este valid.");
+        }
+        catch (InvalidTimeZoneException)
+        {
+            throw new InvalidOperationException(
+                "Fusul orar specificat nu este valid.");
+        }
+
+        return normalized;
+    }
+
     private BusinessResponse MapBusiness(
         Business business,
         BusinessRole role)
@@ -522,6 +589,8 @@ public class BusinessService : IBusinessService
             City = business.City,
             County = business.County,
             PostalCode = business.PostalCode,
+            CountryCode = business.CountryCode,
+            TimeZoneId = business.TimeZoneId,
             Latitude = business.Latitude,
             Longitude = business.Longitude,
 
