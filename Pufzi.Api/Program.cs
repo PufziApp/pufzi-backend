@@ -12,6 +12,7 @@ using Pufzi.Infrastructure.Storage;
 using Pufzi.Services.AnimalSpecies;
 using Pufzi.Services.Auth;
 using Pufzi.Services.Businesses;
+using Pufzi.Services.Schedules;
 using Pufzi.Services.ServicePackages;
 using Pufzi.Services.Team;
 using System.IdentityModel.Tokens.Jwt;
@@ -185,6 +186,10 @@ builder.Services.AddScoped<
 builder.Services.AddScoped<
     IBusinessAccessService,
     BusinessAccessService>();
+
+builder.Services.AddScoped<
+    IScheduleService,
+    ScheduleService>();
 
 builder.Services.AddScoped<
     IServicePackageService,
