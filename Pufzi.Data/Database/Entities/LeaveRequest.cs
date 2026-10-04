@@ -8,6 +8,8 @@ public class LeaveRequest
 
     public Guid BusinessMembershipId { get; set; }
 
+    public LeaveType Type { get; set; }
+
     public DateOnly StartDate { get; set; }
 
     public DateOnly EndDate { get; set; }
@@ -23,7 +25,11 @@ public class LeaveRequest
 
     public DateTime? ReviewedAt { get; set; }
 
+    public string? ReviewNote { get; set; }
+
     public DateTime CreatedAt { get; set; }
+
+    public DateTime UpdatedAt { get; set; }
 
     public BusinessMembership BusinessMembership { get; set; } = null!;
 

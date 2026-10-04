@@ -47,4 +47,6 @@ public class Business
     public ICollection<ServicePackage> ServicePackages { get; set; } = [];
 
     public ICollection<BusinessWorkingHour> WorkingHours { get; set; } = [];
+
+    public ICollection<BusinessScheduleException> ScheduleExceptions { get; set; } = [];
 }

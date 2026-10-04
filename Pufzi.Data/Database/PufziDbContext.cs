@@ -24,10 +24,19 @@ public class PufziDbContext : DbContext
         Set<BusinessMembership>();
 
     public DbSet<BusinessWorkingHour> BusinessWorkingHours =>
-    Set<BusinessWorkingHour>();
+        Set<BusinessWorkingHour>();
 
     public DbSet<EmployeeWorkingHour> EmployeeWorkingHours =>
         Set<EmployeeWorkingHour>();
+
+    public DbSet<BusinessScheduleException> BusinessScheduleExceptions =>
+        Set<BusinessScheduleException>();
+
+    public DbSet<EmployeeLeaveBalance> EmployeeLeaveBalances =>
+        Set<EmployeeLeaveBalance>();
+
+    public DbSet<LeaveRequest> LeaveRequests =>
+        Set<LeaveRequest>();
 
     public DbSet<BusinessInvitation> BusinessInvitations =>
         Set<BusinessInvitation>();
