@@ -23,6 +23,7 @@
 		<ProjectReference Include="..\Pufzi.Services\Pufzi.Services.csproj" />
 		<ProjectReference Include="..\Pufzi.Contracts\Pufzi.Contracts.csproj" />
 		<ProjectReference Include="..\Pufzi.Infrastructure\Pufzi.Infrastructure.csproj" />
+		<ProjectReference Include="..\Pufzi.Data\Pufzi.Data.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

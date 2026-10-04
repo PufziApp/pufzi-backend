@@ -10,9 +10,9 @@ public class BusinessWorkingHour
 
     public bool IsOpen { get; set; }
 
-    public TimeOnly? OpenTime { get; set; }
+    public TimeOnly? StartTime { get; set; }
 
-    public TimeOnly? CloseTime { get; set; }
+    public TimeOnly? EndTime { get; set; }
 
     public Business Business { get; set; } = null!;
 }
