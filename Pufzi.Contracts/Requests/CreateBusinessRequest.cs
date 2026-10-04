@@ -55,6 +55,22 @@ public class CreateBusinessRequest
     public string? PostalCode { get; init; }
 
     /// <summary>
+    /// Codul ISO 3166-1 alpha-2 al țării în care se află salonul.
+    /// Exemplu: RO, HU.
+    /// </summary>
+    [Required]
+    [StringLength(2, MinimumLength = 2)]
+    public required string CountryCode { get; init; }
+
+    /// <summary>
+    /// Identificatorul IANA al fusului orar al salonului.
+    /// Exemplu: Europe/Bucharest.
+    /// </summary>
+    [Required]
+    [MaxLength(100)]
+    public required string TimeZoneId { get; init; }
+
+    /// <summary>
     /// Latitudinea salonului. Opțional. Valoare între -90 și 90.
     /// </summary>
     [Range(

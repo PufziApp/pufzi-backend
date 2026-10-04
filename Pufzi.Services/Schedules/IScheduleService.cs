@@ -28,4 +28,32 @@ public interface IScheduleService
         Guid teamMemberUserId,
         UpdateEmployeeWorkingHoursRequest request,
         CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyCollection<BusinessScheduleExceptionResponse>>
+        GetBusinessScheduleExceptionsAsync(
+            Guid userId,
+            Guid businessId,
+            BusinessScheduleExceptionFilterRequest request,
+            CancellationToken cancellationToken = default);
+
+    Task<BusinessScheduleExceptionResponse>
+        CreateBusinessScheduleExceptionAsync(
+            Guid userId,
+            Guid businessId,
+            CreateBusinessScheduleExceptionRequest request,
+            CancellationToken cancellationToken = default);
+
+    Task<BusinessScheduleExceptionResponse>
+        UpdateBusinessScheduleExceptionAsync(
+            Guid userId,
+            Guid businessId,
+            Guid exceptionId,
+            UpdateBusinessScheduleExceptionRequest request,
+            CancellationToken cancellationToken = default);
+
+    Task DeleteBusinessScheduleExceptionAsync(
+        Guid userId,
+        Guid businessId,
+        Guid exceptionId,
+        CancellationToken cancellationToken = default);
 }

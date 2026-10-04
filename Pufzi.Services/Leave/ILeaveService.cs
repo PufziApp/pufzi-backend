@@ -63,4 +63,11 @@ public interface ILeaveService
         Guid requestId,
         ReviewLeaveRequest request,
         CancellationToken cancellationToken = default);
+
+    Task<LeaveRequestResponse> RevokeRequestAsync(
+        Guid userId,
+        Guid businessId,
+        Guid requestId,
+        ReviewLeaveRequest request,
+        CancellationToken cancellationToken = default);
 }

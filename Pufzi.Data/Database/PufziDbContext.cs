@@ -38,6 +38,9 @@ public class PufziDbContext : DbContext
     public DbSet<LeaveRequest> LeaveRequests =>
         Set<LeaveRequest>();
 
+    public DbSet<LeaveRequestBalanceUsage> LeaveRequestBalanceUsages =>
+        Set<LeaveRequestBalanceUsage>();
+
     public DbSet<BusinessInvitation> BusinessInvitations =>
         Set<BusinessInvitation>();
 

@@ -23,5 +23,10 @@ public enum LeaveRequestStatusRequest
     /// <summary>
     /// Cererea a fost anulată.
     /// </summary>
-    Cancelled = 4
+    Cancelled = 4,
+
+    /// <summary>
+    /// Cererea a fost revocată.
+    /// </summary>
+    Revoked = 5
 }

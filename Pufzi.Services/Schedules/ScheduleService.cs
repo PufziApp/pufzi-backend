@@ -232,6 +232,191 @@ public class ScheduleService : IScheduleService
             workingHours);
     }
 
+    public async Task<IReadOnlyCollection<BusinessScheduleExceptionResponse>>
+        GetBusinessScheduleExceptionsAsync(
+            Guid userId,
+            Guid businessId,
+            BusinessScheduleExceptionFilterRequest request,
+            CancellationToken cancellationToken = default)
+    {
+        await _businessAccess.RequireMembershipAsync(
+            userId,
+            businessId,
+            cancellationToken);
+
+        ValidateExceptionFilter(request);
+
+        var query = _dbContext.BusinessScheduleExceptions
+            .AsNoTracking()
+            .Where(x => x.BusinessId == businessId);
+
+        if (request.FromDate.HasValue)
+        {
+            query = query.Where(x =>
+                x.Date >= request.FromDate.Value);
+        }
+
+        if (request.ToDate.HasValue)
+        {
+            query = query.Where(x =>
+                x.Date <= request.ToDate.Value);
+        }
+
+        var exceptions = await query
+            .OrderBy(x => x.Date)
+            .ToListAsync(cancellationToken);
+
+        return exceptions
+            .Select(MapBusinessScheduleException)
+            .ToList();
+    }
+
+    public async Task<BusinessScheduleExceptionResponse>
+        CreateBusinessScheduleExceptionAsync(
+            Guid userId,
+            Guid businessId,
+            CreateBusinessScheduleExceptionRequest request,
+            CancellationToken cancellationToken = default)
+    {
+        await _businessAccess.RequireOwnerAsync(
+            userId,
+            businessId,
+            cancellationToken);
+
+        ValidateScheduleException(
+            request.IsClosed,
+            request.OpenTime,
+            request.CloseTime);
+
+        var alreadyExists =
+            await _dbContext.BusinessScheduleExceptions
+                .AnyAsync(
+                    x =>
+                        x.BusinessId == businessId &&
+                        x.Date == request.Date,
+                    cancellationToken);
+
+        if (alreadyExists)
+        {
+            throw new InvalidOperationException(
+                "Există deja o excepție de program pentru această dată.");
+        }
+
+        var scheduleException =
+            new BusinessScheduleException
+            {
+                Id = Guid.NewGuid(),
+                BusinessId = businessId,
+                Date = request.Date,
+                IsClosed = request.IsClosed,
+                OpenTime = request.IsClosed
+                    ? null
+                    : request.OpenTime,
+                CloseTime = request.IsClosed
+                    ? null
+                    : request.CloseTime,
+                Reason = NormalizeOptionalText(
+                    request.Reason)
+            };
+
+        _dbContext.BusinessScheduleExceptions.Add(
+            scheduleException);
+
+        await _dbContext.SaveChangesAsync(
+            cancellationToken);
+
+        return MapBusinessScheduleException(
+            scheduleException);
+    }
+
+    public async Task<BusinessScheduleExceptionResponse>
+        UpdateBusinessScheduleExceptionAsync(
+            Guid userId,
+            Guid businessId,
+            Guid exceptionId,
+            UpdateBusinessScheduleExceptionRequest request,
+            CancellationToken cancellationToken = default)
+    {
+        await _businessAccess.RequireOwnerAsync(
+            userId,
+            businessId,
+            cancellationToken);
+
+        ValidateScheduleException(
+            request.IsClosed,
+            request.OpenTime,
+            request.CloseTime);
+
+        var scheduleException =
+            await _dbContext.BusinessScheduleExceptions
+                .FirstOrDefaultAsync(
+                    x =>
+                        x.Id == exceptionId &&
+                        x.BusinessId == businessId,
+                    cancellationToken);
+
+        if (scheduleException is null)
+        {
+            throw new KeyNotFoundException(
+                "Excepția de program nu a fost găsită.");
+        }
+
+        scheduleException.IsClosed =
+            request.IsClosed;
+
+        scheduleException.OpenTime =
+            request.IsClosed
+                ? null
+                : request.OpenTime;
+
+        scheduleException.CloseTime =
+            request.IsClosed
+                ? null
+                : request.CloseTime;
+
+        scheduleException.Reason =
+            NormalizeOptionalText(
+                request.Reason);
+
+        await _dbContext.SaveChangesAsync(
+            cancellationToken);
+
+        return MapBusinessScheduleException(
+            scheduleException);
+    }
+
+    public async Task DeleteBusinessScheduleExceptionAsync(
+        Guid userId,
+        Guid businessId,
+        Guid exceptionId,
+        CancellationToken cancellationToken = default)
+    {
+        await _businessAccess.RequireOwnerAsync(
+            userId,
+            businessId,
+            cancellationToken);
+
+        var scheduleException =
+            await _dbContext.BusinessScheduleExceptions
+                .FirstOrDefaultAsync(
+                    x =>
+                        x.Id == exceptionId &&
+                        x.BusinessId == businessId,
+                    cancellationToken);
+
+        if (scheduleException is null)
+        {
+            throw new KeyNotFoundException(
+                "Excepția de program nu a fost găsită.");
+        }
+
+        _dbContext.BusinessScheduleExceptions.Remove(
+            scheduleException);
+
+        await _dbContext.SaveChangesAsync(
+            cancellationToken);
+    }
+
     private async Task<BusinessMembership> GetTeamMemberAsync(
         Guid businessId,
         Guid teamMemberUserId,
@@ -317,6 +502,49 @@ public class ScheduleService : IScheduleService
             ValidateIntervals(
                 day.DayOfWeek,
                 day.Intervals);
+        }
+    }
+
+    private static void ValidateExceptionFilter(
+        BusinessScheduleExceptionFilterRequest request)
+    {
+        if (request.FromDate.HasValue &&
+            request.ToDate.HasValue &&
+            request.FromDate.Value > request.ToDate.Value)
+        {
+            throw new InvalidOperationException(
+                "Data de început nu poate fi după data de sfârșit.");
+        }
+    }
+
+    private static void ValidateScheduleException(
+        bool isClosed,
+        TimeOnly? openTime,
+        TimeOnly? closeTime)
+    {
+        if (isClosed)
+        {
+            if (openTime.HasValue ||
+                closeTime.HasValue)
+            {
+                throw new InvalidOperationException(
+                    "O zi în care salonul este închis nu poate avea ore de deschidere sau închidere.");
+            }
+
+            return;
+        }
+
+        if (!openTime.HasValue ||
+            !closeTime.HasValue)
+        {
+            throw new InvalidOperationException(
+                "Pentru o zi cu program special trebuie specificate ora de deschidere și ora de închidere.");
+        }
+
+        if (openTime.Value >= closeTime.Value)
+        {
+            throw new InvalidOperationException(
+                "Ora de deschidere trebuie să fie înaintea orei de închidere.");
         }
     }
 
@@ -472,5 +700,31 @@ public class ScheduleService : IScheduleService
 
             Days = days
         };
+    }
+
+    private static BusinessScheduleExceptionResponse
+        MapBusinessScheduleException(
+            BusinessScheduleException scheduleException)
+    {
+        return new BusinessScheduleExceptionResponse
+        {
+            Id = scheduleException.Id,
+            Date = scheduleException.Date,
+            IsClosed = scheduleException.IsClosed,
+            OpenTime = scheduleException.OpenTime,
+            CloseTime = scheduleException.CloseTime,
+            Reason = scheduleException.Reason
+        };
+    }
+
+    private static string? NormalizeOptionalText(
+        string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return null;
+        }
+
+        return value.Trim();
     }
 }
