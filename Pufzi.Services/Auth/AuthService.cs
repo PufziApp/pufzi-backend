@@ -43,11 +43,9 @@ public class AuthService : IAuthService
         RegisterRequest request,
         CancellationToken cancellationToken = default)
     {
-        if (request.Password != request.ConfirmPassword)
-        {
-            throw new InvalidOperationException(
-                "Parolele nu coincid.");
-        }
+        ValidatePassword(
+            request.Password,
+            request.ConfirmPassword);
 
         var firstName = request.FirstName.Trim();
         var lastName = request.LastName.Trim();
@@ -74,7 +72,9 @@ public class AuthService : IAuthService
             LastName = lastName,
             Email = email,
             NormalizedEmail = normalizedEmail,
-            PasswordHash = _passwordHasher.Hash(request.Password),
+
+            PasswordHash =
+                _passwordHasher.Hash(request.Password),
 
             PlatformRole = PlatformRole.User,
 
@@ -98,7 +98,8 @@ public class AuthService : IAuthService
             Type = UserTokenType.EmailConfirmation,
 
             TokenHash =
-                _tokenGenerator.HashToken(confirmationToken),
+                _tokenGenerator.HashToken(
+                    confirmationToken),
 
             CreatedAt = now,
             ExpiresAt = now.AddHours(24)
@@ -538,12 +539,9 @@ public class AuthService : IAuthService
         ResetPasswordRequest request,
         CancellationToken cancellationToken = default)
     {
-        if (request.Password !=
-            request.ConfirmPassword)
-        {
-            throw new InvalidOperationException(
-                "Parolele nu coincid.");
-        }
+        ValidatePassword(
+            request.Password,
+            request.ConfirmPassword);
 
         if (string.IsNullOrWhiteSpace(
                 request.Token))
@@ -717,5 +715,53 @@ public class AuthService : IAuthService
         return days > 0
             ? days
             : 30;
+    }
+
+    private static void ValidatePassword(
+    string password,
+    string confirmPassword)
+    {
+        if (password != confirmPassword)
+        {
+            throw new InvalidOperationException(
+                "Parolele nu coincid.");
+        }
+
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            throw new InvalidOperationException(
+                "Parola este obligatorie.");
+        }
+
+        if (password.Length < 8)
+        {
+            throw new InvalidOperationException(
+                "Parola trebuie să conțină cel puțin 8 caractere.");
+        }
+
+        if (password.Length > 128)
+        {
+            throw new InvalidOperationException(
+                "Parola nu poate conține mai mult de 128 de caractere.");
+        }
+
+        if (!password.Any(char.IsUpper))
+        {
+            throw new InvalidOperationException(
+                "Parola trebuie să conțină cel puțin o literă mare.");
+        }
+
+        if (!password.Any(char.IsDigit))
+        {
+            throw new InvalidOperationException(
+                "Parola trebuie să conțină cel puțin o cifră.");
+        }
+
+        if (!password.Any(character =>
+                !char.IsLetterOrDigit(character)))
+        {
+            throw new InvalidOperationException(
+                "Parola trebuie să conțină cel puțin un caracter special.");
+        }
     }
 }
