@@ -28,3 +28,6 @@ jobs:
 
       - name: Build backend
         run: dotnet build Pufzi.Backend.slnx --configuration Release --no-restore
+
+      - name: Build Docker image
+        run: docker build -f Pufzi.Api/Dockerfile -t pufzi-backend .
