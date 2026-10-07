@@ -32,6 +32,12 @@ var connectionString = builder.Configuration
 builder.Services.AddDbContext<PufziDbContext>(options =>
     options.UseNpgsql(connectionString));
 
+builder.Services
+    .AddHealthChecks()
+    .AddNpgSql(
+        connectionString,
+        name: "postgresql");
+
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -240,6 +246,8 @@ app.UseCors(CorsPolicy);
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapHealthChecks("/health");
 
 app.MapControllers();
 
