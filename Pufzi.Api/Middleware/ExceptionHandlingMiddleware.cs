@@ -24,6 +24,11 @@ public class ExceptionHandlingMiddleware
         }
         catch (UnauthorizedAccessException exception)
         {
+            _logger.LogWarning(
+                "Unauthorized request. Method: {Method}, Path: {Path}",
+                context.Request.Method,
+                context.Request.Path);
+
             await WriteErrorResponseAsync(
                 context,
                 HttpStatusCode.Unauthorized,
@@ -31,6 +36,11 @@ public class ExceptionHandlingMiddleware
         }
         catch (KeyNotFoundException exception)
         {
+            _logger.LogWarning(
+                "Resource not found. Method: {Method}, Path: {Path}",
+                context.Request.Method,
+                context.Request.Path);
+
             await WriteErrorResponseAsync(
                 context,
                 HttpStatusCode.NotFound,
@@ -38,6 +48,11 @@ public class ExceptionHandlingMiddleware
         }
         catch (InvalidOperationException exception)
         {
+            _logger.LogWarning(
+                "Invalid operation. Method: {Method}, Path: {Path}",
+                context.Request.Method,
+                context.Request.Path);
+
             await WriteErrorResponseAsync(
                 context,
                 HttpStatusCode.BadRequest,
@@ -47,7 +62,9 @@ public class ExceptionHandlingMiddleware
         {
             _logger.LogError(
                 exception,
-                "An unhandled exception occurred.");
+                "Unhandled exception. Method: {Method}, Path: {Path}",
+                context.Request.Method,
+                context.Request.Path);
 
             await WriteErrorResponseAsync(
                 context,
