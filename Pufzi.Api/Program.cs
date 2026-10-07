@@ -77,15 +77,24 @@ builder.Services.AddSwaggerGen(options =>
     options.IncludeXmlComments(contractsXmlPath);
 });
 
+var corsOptions = builder.Configuration
+    .GetSection(CorsOptions.SectionName)
+    .Get<CorsOptions>()
+    ?? throw new InvalidOperationException(
+        "CORS configuration was not found.");
+
+if (corsOptions.AllowedOrigins.Length == 0)
+{
+    throw new InvalidOperationException(
+        "At least one CORS allowed origin must be configured.");
+}
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(CorsPolicy, policy =>
     {
         policy
-            .WithOrigins(
-                "http://localhost:5173",
-                "https://localhost:5173"
-            )
+            .WithOrigins(corsOptions.AllowedOrigins)
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
