@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Pufzi.Contracts.Requests.Auth;
 using Pufzi.Services.Auth;
 
@@ -20,6 +21,7 @@ public class AuthController : ControllerBase
     /// Creează un cont nou de utilizator.
     /// </summary>
     [AllowAnonymous]
+    [EnableRateLimiting("auth-strict")]
     [HttpPost("register")]
     public async Task<IActionResult> Register(
         [FromBody] RegisterRequest request,
@@ -36,6 +38,7 @@ public class AuthController : ControllerBase
     /// Confirmă adresa de email folosind tokenul primit.
     /// </summary>
     [AllowAnonymous]
+    [EnableRateLimiting("auth-general")]
     [HttpPost("confirm-email")]
     public async Task<IActionResult> ConfirmEmail(
         [FromBody] ConfirmEmailRequest request,
@@ -55,6 +58,7 @@ public class AuthController : ControllerBase
     /// Confirmă adresa de email direct din linkul primit prin email.
     /// </summary>
     [AllowAnonymous]
+    [EnableRateLimiting("auth-general")]
     [HttpGet("confirm-email")]
     public async Task<ContentResult> ConfirmEmailFromLink(
         [FromQuery] string token,
@@ -186,6 +190,7 @@ public class AuthController : ControllerBase
     /// Autentifică un utilizator folosind email și parolă.
     /// </summary>
     [AllowAnonymous]
+    [EnableRateLimiting("auth-login")]
     [HttpPost("login")]
     public async Task<IActionResult> Login(
         [FromBody] LoginRequest request,
@@ -202,6 +207,7 @@ public class AuthController : ControllerBase
     /// Generează un access token nou folosind un refresh token valid.
     /// </summary>
     [AllowAnonymous]
+    [EnableRateLimiting("auth-general")]
     [HttpPost("refresh")]
     public async Task<IActionResult> Refresh(
         [FromBody] RefreshTokenRequest request,
@@ -234,6 +240,7 @@ public class AuthController : ControllerBase
     /// Trimite instrucțiuni pentru resetarea parolei.
     /// </summary>
     [AllowAnonymous]
+    [EnableRateLimiting("auth-strict")]
     [HttpPost("forgot-password")]
     public async Task<IActionResult> ForgotPassword(
         [FromBody] ForgotPasswordRequest request,
@@ -255,6 +262,7 @@ public class AuthController : ControllerBase
     /// Resetează parola folosind un token valid.
     /// </summary>
     [AllowAnonymous]
+    [EnableRateLimiting("auth-strict")]
     [HttpPost("reset-password")]
     public async Task<IActionResult> ResetPassword(
         [FromBody] ResetPasswordRequest request,
@@ -274,6 +282,7 @@ public class AuthController : ControllerBase
     /// Autentifică sau înregistrează un utilizator folosind Google.
     /// </summary>
     [AllowAnonymous]
+    [EnableRateLimiting("auth-login")]
     [HttpPost("google")]
     public async Task<IActionResult> GoogleLogin(
         [FromBody] GoogleLoginRequest request,
