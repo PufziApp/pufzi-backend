@@ -24,6 +24,9 @@ public class ExceptionHandlingMiddleware
         }
         catch (UnauthorizedAccessException exception)
         {
+            _logger.LogWarning(
+                "An unauthorized request was rejected.");
+
             await WriteErrorResponseAsync(
                 context,
                 HttpStatusCode.Unauthorized,
@@ -31,6 +34,9 @@ public class ExceptionHandlingMiddleware
         }
         catch (KeyNotFoundException exception)
         {
+            _logger.LogWarning(
+                "A requested resource was not found.");
+
             await WriteErrorResponseAsync(
                 context,
                 HttpStatusCode.NotFound,
@@ -38,6 +44,9 @@ public class ExceptionHandlingMiddleware
         }
         catch (InvalidOperationException exception)
         {
+            _logger.LogWarning(
+                "An invalid operation was rejected.");
+
             await WriteErrorResponseAsync(
                 context,
                 HttpStatusCode.BadRequest,
