@@ -25,9 +25,7 @@ public class ExceptionHandlingMiddleware
         catch (UnauthorizedAccessException exception)
         {
             _logger.LogWarning(
-                "Unauthorized request. Method: {Method}, Path: {Path}",
-                context.Request.Method,
-                context.Request.Path);
+                "An unauthorized request was rejected.");
 
             await WriteErrorResponseAsync(
                 context,
@@ -37,9 +35,7 @@ public class ExceptionHandlingMiddleware
         catch (KeyNotFoundException exception)
         {
             _logger.LogWarning(
-                "Resource not found. Method: {Method}, Path: {Path}",
-                context.Request.Method,
-                context.Request.Path);
+                "A requested resource was not found.");
 
             await WriteErrorResponseAsync(
                 context,
@@ -49,9 +45,7 @@ public class ExceptionHandlingMiddleware
         catch (InvalidOperationException exception)
         {
             _logger.LogWarning(
-                "Invalid operation. Method: {Method}, Path: {Path}",
-                context.Request.Method,
-                context.Request.Path);
+                "An invalid operation was rejected.");
 
             await WriteErrorResponseAsync(
                 context,
@@ -62,9 +56,7 @@ public class ExceptionHandlingMiddleware
         {
             _logger.LogError(
                 exception,
-                "Unhandled exception. Method: {Method}, Path: {Path}",
-                context.Request.Method,
-                context.Request.Path);
+                "An unhandled exception occurred.");
 
             await WriteErrorResponseAsync(
                 context,
