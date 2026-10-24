@@ -11,9 +11,11 @@ using Pufzi.Infrastructure.PublicHolidays;
 using Pufzi.Infrastructure.Security;
 using Pufzi.Infrastructure.Storage;
 using Pufzi.Services.AnimalSpecies;
+using Pufzi.Services.AnimalBreeds;
 using Pufzi.Services.Auth;
 using Pufzi.Services.Businesses;
 using Pufzi.Services.Leave;
+using Pufzi.Services.Pets;
 using Pufzi.Services.Schedules;
 using Pufzi.Services.ServicePackages;
 using Pufzi.Services.Team;
@@ -228,6 +230,14 @@ builder.Services.AddScoped<
 builder.Services.AddScoped<
     ILeaveService,
     LeaveService>();
+
+builder.Services.AddScoped<
+    IAnimalBreedService, 
+    AnimalBreedService>();
+
+builder.Services.AddScoped<
+    IPetService, 
+    PetService>();
 
 builder.Services.AddMemoryCache();
 

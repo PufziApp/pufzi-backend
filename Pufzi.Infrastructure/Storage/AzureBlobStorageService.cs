@@ -7,11 +7,15 @@ namespace Pufzi.Infrastructure.Storage;
 public class AzureBlobStorageService : IBlobStorageService
 {
     private readonly BlobContainerClient _publicContainer;
+    private readonly string? _publicBaseUrl;
 
     public AzureBlobStorageService(
         IOptions<AzureBlobStorageOptions> options)
     {
         var settings = options.Value;
+
+        _publicBaseUrl =
+            settings.PublicBaseUrl?.TrimEnd('/');
 
         var blobServiceClient =
             new BlobServiceClient(settings.ConnectionString);
@@ -64,6 +68,16 @@ public class AzureBlobStorageService : IBlobStorageService
 
     public string GetPublicUrl(string blobName)
     {
+        if (!string.IsNullOrWhiteSpace(_publicBaseUrl))
+        {
+            var encodedPath = string.Join(
+                "/",
+                blobName.Split('/')
+                    .Select(Uri.EscapeDataString));
+
+            return $"{_publicBaseUrl}/{_publicContainer.Name}/{encodedPath}";
+        }
+
         return _publicContainer
             .GetBlobClient(blobName)
             .Uri
