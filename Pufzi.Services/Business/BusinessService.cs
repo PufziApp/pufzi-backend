@@ -118,7 +118,8 @@ public class BusinessService : IBusinessService
                     .ThenInclude(x => x.Images)
                 .Where(x =>
                     x.UserId == userId &&
-                    x.IsActive)
+                    x.IsActive &&
+                    x.RemovedAt == null)
                 .ToListAsync(cancellationToken);
 
         return memberships
