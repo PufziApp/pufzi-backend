@@ -49,6 +49,15 @@ public class PufziDbContext : DbContext
 
     public DbSet<AnimalSpecies> AnimalSpecies => Set<AnimalSpecies>();
 
+    public DbSet<AnimalBreed> AnimalBreeds =>
+    Set<AnimalBreed>();
+
+    public DbSet<Pet> Pets =>
+        Set<Pet>();
+
+    public DbSet<PetImage> PetImages =>
+        Set<PetImage>();
+
     public DbSet<ServicePackage> ServicePackages =>
         Set<ServicePackage>();
 

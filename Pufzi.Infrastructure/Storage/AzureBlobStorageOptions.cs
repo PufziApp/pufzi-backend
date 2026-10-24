@@ -7,4 +7,6 @@ public class AzureBlobStorageOptions
     public required string ConnectionString { get; init; }
 
     public string PublicContainerName { get; init; } = "public";
+
+    public string? PublicBaseUrl { get; init; }
 }
