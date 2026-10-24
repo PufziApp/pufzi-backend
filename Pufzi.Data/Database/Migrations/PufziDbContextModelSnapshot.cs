@@ -22,6 +22,180 @@ namespace Pufzi.Data.Database.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.AnimalBreed", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AnimalSpeciesId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnimalSpeciesId", "Code")
+                        .IsUnique();
+
+                    b.ToTable("AnimalBreeds", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-000000000001"),
+                            AnimalSpeciesId = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Code = "beagle",
+                            IsActive = true,
+                            SortOrder = 1
+                        },
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-000000000002"),
+                            AnimalSpeciesId = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Code = "bichon_frise",
+                            IsActive = true,
+                            SortOrder = 2
+                        },
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-000000000003"),
+                            AnimalSpeciesId = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Code = "maltese",
+                            IsActive = true,
+                            SortOrder = 3
+                        },
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-000000000004"),
+                            AnimalSpeciesId = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Code = "border_collie",
+                            IsActive = true,
+                            SortOrder = 4
+                        },
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-000000000005"),
+                            AnimalSpeciesId = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Code = "french_bulldog",
+                            IsActive = true,
+                            SortOrder = 5
+                        },
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-000000000006"),
+                            AnimalSpeciesId = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Code = "german_shepherd",
+                            IsActive = true,
+                            SortOrder = 6
+                        },
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-000000000007"),
+                            AnimalSpeciesId = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Code = "golden_retriever",
+                            IsActive = true,
+                            SortOrder = 7
+                        },
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-000000000008"),
+                            AnimalSpeciesId = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Code = "labrador_retriever",
+                            IsActive = true,
+                            SortOrder = 8
+                        },
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-000000000009"),
+                            AnimalSpeciesId = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Code = "poodle",
+                            IsActive = true,
+                            SortOrder = 9
+                        },
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-000000000010"),
+                            AnimalSpeciesId = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Code = "shih_tzu",
+                            IsActive = true,
+                            SortOrder = 10
+                        },
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-000000000011"),
+                            AnimalSpeciesId = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Code = "mixed_breed",
+                            IsActive = true,
+                            SortOrder = 11
+                        },
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-000000000101"),
+                            AnimalSpeciesId = new Guid("22222222-2222-2222-2222-222222222222"),
+                            Code = "british_shorthair",
+                            IsActive = true,
+                            SortOrder = 1
+                        },
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-000000000102"),
+                            AnimalSpeciesId = new Guid("22222222-2222-2222-2222-222222222222"),
+                            Code = "maine_coon",
+                            IsActive = true,
+                            SortOrder = 2
+                        },
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-000000000103"),
+                            AnimalSpeciesId = new Guid("22222222-2222-2222-2222-222222222222"),
+                            Code = "persian",
+                            IsActive = true,
+                            SortOrder = 3
+                        },
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-000000000104"),
+                            AnimalSpeciesId = new Guid("22222222-2222-2222-2222-222222222222"),
+                            Code = "ragdoll",
+                            IsActive = true,
+                            SortOrder = 4
+                        },
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-000000000105"),
+                            AnimalSpeciesId = new Guid("22222222-2222-2222-2222-222222222222"),
+                            Code = "siamese",
+                            IsActive = true,
+                            SortOrder = 5
+                        },
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-000000000106"),
+                            AnimalSpeciesId = new Guid("22222222-2222-2222-2222-222222222222"),
+                            Code = "sphynx",
+                            IsActive = true,
+                            SortOrder = 6
+                        },
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-000000000107"),
+                            AnimalSpeciesId = new Guid("22222222-2222-2222-2222-222222222222"),
+                            Code = "mixed_breed",
+                            IsActive = true,
+                            SortOrder = 7
+                        });
+                });
+
             modelBuilder.Entity("Pufzi.Data.Database.Entities.AnimalSpecies", b =>
                 {
                     b.Property<Guid>("Id")
@@ -531,6 +705,135 @@ namespace Pufzi.Data.Database.Migrations
                     b.ToTable("LeaveRequestBalanceUsages", (string)null);
                 });
 
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.Pet", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("AnimalBreedId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AnimalSpeciesId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ArchivedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateOnly?>("BirthDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Color")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal?>("HeightCm")
+                        .HasPrecision(7, 2)
+                        .HasColumnType("numeric(7,2)");
+
+                    b.Property<string>("ImportantInformation")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("ImportantInformationStatus")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasDefaultValue("Unknown");
+
+                    b.Property<bool>("IsArchived")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("MicrochipNumber")
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<string>("MicrochipStatus")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasDefaultValue("Unknown");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("ProfileImageBlobName")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Sex")
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<string>("SterilizationStatus")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasDefaultValue("Unknown");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal?>("WeightKg")
+                        .HasPrecision(7, 2)
+                        .HasColumnType("numeric(7,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnimalBreedId");
+
+                    b.HasIndex("AnimalSpeciesId");
+
+                    b.HasIndex("UserId", "IsArchived", "CreatedAt");
+
+                    b.ToTable("Pets", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Pets_HeightCm", "\"HeightCm\" IS NULL OR (\"HeightCm\" > 0 AND \"HeightCm\" <= 99999)");
+
+                            t.HasCheckConstraint("CK_Pets_WeightKg", "\"WeightKg\" IS NULL OR (\"WeightKg\" > 0 AND \"WeightKg\" <= 99999)");
+                        });
+                });
+
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.PetImage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("BlobName")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("PetId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PetId", "SortOrder");
+
+                    b.ToTable("PetImages", (string)null);
+                });
+
             modelBuilder.Entity("Pufzi.Data.Database.Entities.RefreshToken", b =>
                 {
                     b.Property<Guid>("Id")
@@ -837,6 +1140,17 @@ namespace Pufzi.Data.Database.Migrations
                     b.ToTable("UserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.AnimalBreed", b =>
+                {
+                    b.HasOne("Pufzi.Data.Database.Entities.AnimalSpecies", "AnimalSpecies")
+                        .WithMany("Breeds")
+                        .HasForeignKey("AnimalSpeciesId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AnimalSpecies");
+                });
+
             modelBuilder.Entity("Pufzi.Data.Database.Entities.BusinessImage", b =>
                 {
                     b.HasOne("Pufzi.Data.Database.Entities.Business", "Business")
@@ -970,6 +1284,43 @@ namespace Pufzi.Data.Database.Migrations
                     b.Navigation("LeaveRequest");
                 });
 
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.Pet", b =>
+                {
+                    b.HasOne("Pufzi.Data.Database.Entities.AnimalBreed", "AnimalBreed")
+                        .WithMany("Pets")
+                        .HasForeignKey("AnimalBreedId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Pufzi.Data.Database.Entities.AnimalSpecies", "AnimalSpecies")
+                        .WithMany("Pets")
+                        .HasForeignKey("AnimalSpeciesId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Pufzi.Data.Database.Entities.User", "User")
+                        .WithMany("Pets")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AnimalBreed");
+
+                    b.Navigation("AnimalSpecies");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.PetImage", b =>
+                {
+                    b.HasOne("Pufzi.Data.Database.Entities.Pet", "Pet")
+                        .WithMany("Images")
+                        .HasForeignKey("PetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Pet");
+                });
+
             modelBuilder.Entity("Pufzi.Data.Database.Entities.RefreshToken", b =>
                 {
                     b.HasOne("Pufzi.Data.Database.Entities.User", "User")
@@ -1082,6 +1433,18 @@ namespace Pufzi.Data.Database.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.AnimalBreed", b =>
+                {
+                    b.Navigation("Pets");
+                });
+
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.AnimalSpecies", b =>
+                {
+                    b.Navigation("Breeds");
+
+                    b.Navigation("Pets");
+                });
+
             modelBuilder.Entity("Pufzi.Data.Database.Entities.Business", b =>
                 {
                     b.Navigation("Images");
@@ -1113,6 +1476,11 @@ namespace Pufzi.Data.Database.Migrations
                     b.Navigation("BalanceUsages");
                 });
 
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.Pet", b =>
+                {
+                    b.Navigation("Images");
+                });
+
             modelBuilder.Entity("Pufzi.Data.Database.Entities.ServicePackage", b =>
                 {
                     b.Navigation("AnimalSpecies");
@@ -1137,6 +1505,8 @@ namespace Pufzi.Data.Database.Migrations
                     b.Navigation("BusinessMemberships");
 
                     b.Navigation("ExternalLogins");
+
+                    b.Navigation("Pets");
 
                     b.Navigation("RefreshTokens");
 

@@ -39,4 +39,6 @@ public class User
     public ICollection<BusinessMembership> BusinessMemberships { get; set; } = [];
 
     public ICollection<BusinessInvitation> SentBusinessInvitations { get; set; } = [];
+
+    public ICollection<Pet> Pets { get; set; } = [];
 }

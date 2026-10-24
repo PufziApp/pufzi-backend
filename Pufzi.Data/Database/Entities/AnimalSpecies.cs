@@ -10,4 +10,7 @@ public class AnimalSpecies
 
     public int SortOrder { get; set; }
 
+    public ICollection<AnimalBreed> Breeds { get; set; } = [];
+
+    public ICollection<Pet> Pets { get; set; } = [];
 }
