@@ -73,6 +73,10 @@ public class BusinessConfiguration : IEntityTypeConfiguration<Business>
         builder.Property(x => x.UpdatedAt)
             .IsRequired();
 
+        builder.Property(x => x.IsPublished)
+            .HasDefaultValue(false)
+            .IsRequired();
+
         builder.HasIndex(x => x.Slug)
             .IsUnique();
     }

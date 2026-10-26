@@ -38,6 +38,8 @@ public class BusinessResponse
 
     public string? FacebookUrl { get; init; }
 
+    public bool IsPublished { get; init; }
+
     public required string CurrentUserRole { get; init; }
 
     public IReadOnlyCollection<BusinessImageResponse> Images { get; init; }

@@ -22,6 +22,7 @@ using Pufzi.Services.Team;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Threading.RateLimiting;
+using Pufzi.Services.Salons;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -238,6 +239,14 @@ builder.Services.AddScoped<
 builder.Services.AddScoped<
     IPetService, 
     PetService>();
+
+builder.Services.AddScoped<
+    ISalonDiscoveryService,
+    SalonDiscoveryService>();
+
+builder.Services.AddScoped<
+    ISalonPackageService,
+    SalonPackageService>();
 
 builder.Services.AddMemoryCache();
 
