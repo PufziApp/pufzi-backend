@@ -27,4 +27,6 @@ public class ServicePackage
     public ICollection<ServicePackageEmployee> Employees { get; set; } = [];
 
     public ICollection<ServicePackageItem> Items { get; set; } = [];
+
+    public ICollection<AppointmentService> AppointmentServices { get; set; } = [];
 }

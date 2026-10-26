@@ -10,13 +10,17 @@ public class PufziDbContext : DbContext
     {
     }
 
-    public DbSet<User> Users => Set<User>();
+    public DbSet<User> Users => 
+        Set<User>();
 
-    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<RefreshToken> RefreshTokens =>
+        Set<RefreshToken>();
 
-    public DbSet<UserToken> UserTokens => Set<UserToken>();
+    public DbSet<UserToken> UserTokens => 
+        Set<UserToken>();
 
-    public DbSet<ExternalLogin> ExternalLogins => Set<ExternalLogin>();
+    public DbSet<ExternalLogin> ExternalLogins => 
+        Set<ExternalLogin>();
 
     public DbSet<Business> Businesses => Set<Business>();
 
@@ -47,10 +51,11 @@ public class PufziDbContext : DbContext
     public DbSet<BusinessImage> BusinessImages =>
         Set<BusinessImage>();
 
-    public DbSet<AnimalSpecies> AnimalSpecies => Set<AnimalSpecies>();
+    public DbSet<AnimalSpecies> AnimalSpecies => 
+        Set<AnimalSpecies>();
 
     public DbSet<AnimalBreed> AnimalBreeds =>
-    Set<AnimalBreed>();
+        Set<AnimalBreed>();
 
     public DbSet<Pet> Pets =>
         Set<Pet>();
@@ -75,6 +80,30 @@ public class PufziDbContext : DbContext
 
     public DbSet<ServicePackageItemVariant> ServicePackageItemVariants =>
         Set<ServicePackageItemVariant>();
+
+    public DbSet<Booking> Bookings =>
+        Set<Booking>();
+
+    public DbSet<Appointment> Appointments =>
+        Set<Appointment>();
+
+    public DbSet<AppointmentService> AppointmentServices =>
+        Set<AppointmentService>();
+
+    public DbSet<AppointmentServiceVariant> AppointmentServiceVariants =>
+        Set<AppointmentServiceVariant>();
+
+    public DbSet<BookingChangeRequest> BookingChangeRequests =>
+        Set<BookingChangeRequest>();
+
+    public DbSet<BookingChangeAppointment> BookingChangeAppointments =>
+        Set<BookingChangeAppointment>();
+
+    public DbSet<BookingHistory> BookingHistories =>
+        Set<BookingHistory>();
+
+    public DbSet<AppointmentSlot> AppointmentSlots =>
+        Set<AppointmentSlot>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
