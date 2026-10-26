@@ -42,6 +42,8 @@ public class Business
 
     public DateTime UpdatedAt { get; set; }
 
+    public bool IsPublished { get; set; } = false;
+
     public ICollection<BusinessMembership> Memberships { get; set; } = [];
 
     public ICollection<BusinessInvitation> Invitations { get; set; } = [];

@@ -467,6 +467,30 @@ public class BusinessService : IBusinessService
             cancellationToken);
     }
 
+    public async Task UpdatePublicationAsync(
+        Guid userId,
+        Guid businessId,
+        bool isPublished,
+        CancellationToken cancellationToken = default)
+    {
+        var membership = await _businessAccess.RequireOwnerAsync(
+            userId,
+            businessId,
+            cancellationToken);
+
+        var business = membership.Business;
+
+        if (business.IsPublished == isPublished)
+        {
+            return;
+        }
+
+        business.IsPublished = isPublished;
+        business.UpdatedAt = DateTime.UtcNow;
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
     private async Task<string> GenerateUniqueSlugAsync(
         string name,
         CancellationToken cancellationToken)
@@ -594,6 +618,7 @@ public class BusinessService : IBusinessService
             TimeZoneId = business.TimeZoneId,
             Latitude = business.Latitude,
             Longitude = business.Longitude,
+            IsPublished = business.IsPublished,
 
             LogoUrl =
                 string.IsNullOrWhiteSpace(

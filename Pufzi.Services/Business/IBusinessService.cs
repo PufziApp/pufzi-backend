@@ -64,4 +64,10 @@ public interface IBusinessService
         Guid businessId,
         Guid imageId,
         CancellationToken cancellationToken = default);
+
+    Task UpdatePublicationAsync(
+        Guid userId,
+        Guid businessId,
+        bool isPublished,
+        CancellationToken cancellationToken = default);
 }
