@@ -1,14 +1,17 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Pufzi.Contracts.Requests.Salons;
-using Pufzi.Contracts.Responses.Salons;
-using Pufzi.Services.Salons;
 using Pufzi.Contracts.Common;
+using Pufzi.Contracts.Requests.Salons;
 using Pufzi.Contracts.Requests.ServicePackages;
+using Pufzi.Contracts.Responses.Salons;
 using Pufzi.Contracts.Responses.ServicePackages;
+using Pufzi.Services.Salons;
 
 namespace Pufzi.Api.Controllers;
 
+/// <summary>
+/// Permite căutarea saloanelor publicate și vizualizarea serviciilor acestora.
+/// </summary>
 [ApiController]
 [AllowAnonymous]
 [Route("api/salons")]
@@ -25,6 +28,10 @@ public class SalonsController : ControllerBase
         _salonPackageService = salonPackageService;
     }
 
+    /// <summary>
+    /// Returnează lista paginată a saloanelor publicate.
+    /// Permite căutare și filtrare după locație.
+    /// </summary>
     [HttpGet]
     [ProducesResponseType(
         typeof(SalonListResponse),
@@ -40,6 +47,10 @@ public class SalonsController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Returnează profilul public al unui salon.
+    /// Sunt disponibile doar saloanele publicate.
+    /// </summary>
     [HttpGet("{salonId:guid}")]
     [ProducesResponseType(
         typeof(SalonDetailResponse),
@@ -57,8 +68,8 @@ public class SalonsController : ControllerBase
     }
 
     /// <summary>
-    /// Returnează pachetele active ale unui salon publicat.
-    /// Permite căutare, filtrare, sortare și paginare.
+    /// Returnează lista paginată a pachetelor active ale unui salon publicat.
+    /// Permite căutare, filtrare și sortare.
     /// </summary>
     [HttpGet("{salonId:guid}/packages")]
     [ProducesResponseType(
@@ -79,8 +90,8 @@ public class SalonsController : ControllerBase
     }
 
     /// <summary>
-    /// Returnează detaliile unui pachet activ,
-    /// inclusiv angajații și variantele serviciilor.
+    /// Returnează detaliile unui pachet activ, inclusiv serviciile,
+    /// variantele, prețurile, duratele și angajații asociați.
     /// </summary>
     [HttpGet("{salonId:guid}/packages/{packageId:guid}")]
     [ProducesResponseType(

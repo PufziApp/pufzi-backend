@@ -6,6 +6,9 @@ using Pufzi.Services.Businesses;
 
 namespace Pufzi.Api.Controllers;
 
+/// <summary>
+/// Gestionează publicarea și ascunderea saloanelor în aplicație.
+/// </summary>
 [ApiController]
 [Authorize]
 [Route("api/businesses")]
@@ -19,6 +22,10 @@ public class BusinessPublicationController : ControllerBase
         _businessService = businessService;
     }
 
+    /// <summary>
+    /// Publică sau ascunde un salon din lista publică.
+    /// Operația poate fi efectuată doar de proprietarul salonului.
+    /// </summary>
     [HttpPut("{businessId:guid}/publication")]
     public async Task<IActionResult> UpdatePublication(
         Guid businessId,
