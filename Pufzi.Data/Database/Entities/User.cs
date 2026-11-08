@@ -41,4 +41,17 @@ public class User
     public ICollection<BusinessInvitation> SentBusinessInvitations { get; set; } = [];
 
     public ICollection<Pet> Pets { get; set; } = [];
+
+    public ICollection<Booking> Bookings { get; set; } = [];
+
+    public ICollection<Booking> ReviewedBookings { get; set; } = [];
+
+    public ICollection<BookingChangeRequest> RequestedBookingChanges
+    { get; set; } = [];
+
+    public ICollection<BookingChangeRequest> ReviewedBookingChanges
+    { get; set; } = [];
+
+    public ICollection<BookingHistory> BookingHistoryEntries
+    { get; set; } = [];
 }

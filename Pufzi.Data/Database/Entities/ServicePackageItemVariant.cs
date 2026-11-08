@@ -23,4 +23,7 @@ public class ServicePackageItemVariant
     public int SortOrder { get; set; }
 
     public ServicePackageItemOption ServicePackageItemOption { get; set; } = null!;
+
+    public ICollection<AppointmentServiceVariant> AppointmentServiceVariants
+    { get; set; } = [];
 }

@@ -258,6 +258,358 @@ namespace Pufzi.Data.Database.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.Appointment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BookingId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("DurationMinutes")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("EndAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("HasPriceOnRequest")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("PetId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("StartAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal?>("TotalPrice")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookingId", "StartAt");
+
+                    b.HasIndex("PetId", "StartAt");
+
+                    b.HasIndex("StartAt", "EndAt");
+
+                    b.ToTable("Appointments", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Appointments_PositiveDuration", "\"DurationMinutes\" > 0");
+
+                            t.HasCheckConstraint("CK_Appointments_ValidTimeRange", "\"EndAt\" > \"StartAt\"");
+                        });
+                });
+
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.AppointmentService", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AppointmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("DurationMinutes")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("HasPriceOnRequest")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("PackageName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<Guid>("ServicePackageId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("TotalPrice")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppointmentId");
+
+                    b.HasIndex("ServicePackageId");
+
+                    b.ToTable("AppointmentServices", (string)null);
+                });
+
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.AppointmentServiceVariant", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AppointmentServiceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("DurationMinutes")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsPriceOnRequest")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsStartingPrice")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ItemName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<decimal?>("Price")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)");
+
+                    b.Property<Guid>("ServicePackageItemVariantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("VariantName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppointmentServiceId");
+
+                    b.HasIndex("ServicePackageItemVariantId");
+
+                    b.ToTable("AppointmentServiceVariants", (string)null);
+                });
+
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.AppointmentSlot", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AppointmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BusinessMembershipId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("EndAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("StartAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppointmentId")
+                        .IsUnique();
+
+                    b.HasIndex("BusinessMembershipId", "StartAt", "EndAt");
+
+                    b.ToTable("AppointmentSlots", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_AppointmentSlots_ValidTimeRange", "\"EndAt\" > \"StartAt\"");
+                        });
+                });
+
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.Booking", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BusinessId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BusinessMembershipId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("RejectionReason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<DateTime?>("ReviewedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("ReviewedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExpiresAt");
+
+                    b.HasIndex("ReviewedByUserId");
+
+                    b.HasIndex("BusinessId", "Status");
+
+                    b.HasIndex("BusinessMembershipId", "Status");
+
+                    b.HasIndex("UserId", "CreatedAt");
+
+                    b.ToTable("Bookings", (string)null);
+                });
+
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.BookingChangeAppointment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AppointmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BookingChangeRequestId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ProposedEndAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("ProposedStartAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppointmentId");
+
+                    b.HasIndex("BookingChangeRequestId", "AppointmentId")
+                        .IsUnique();
+
+                    b.ToTable("BookingChangeAppointments", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_BookingChangeAppointments_ValidTimeRange", "\"ProposedEndAt\" > \"ProposedStartAt\"");
+                        });
+                });
+
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.BookingChangeRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BookingId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<Guid>("RequestedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ReviewNote")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<DateTime?>("ReviewedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("ReviewedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookingId")
+                        .IsUnique()
+                        .HasFilter("\"Status\" = 1");
+
+                    b.HasIndex("ExpiresAt");
+
+                    b.HasIndex("RequestedByUserId");
+
+                    b.HasIndex("ReviewedByUserId");
+
+                    b.HasIndex("BookingId", "Status");
+
+                    b.ToTable("BookingChangeRequests", (string)null);
+                });
+
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.BookingHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Action")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("BookingId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<int?>("NewStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("PerformedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("PreviousStatus")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PerformedByUserId");
+
+                    b.HasIndex("BookingId", "CreatedAt");
+
+                    b.ToTable("BookingHistories", (string)null);
+                });
+
             modelBuilder.Entity("Pufzi.Data.Database.Entities.Business", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1156,6 +1508,179 @@ namespace Pufzi.Data.Database.Migrations
                     b.Navigation("AnimalSpecies");
                 });
 
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.Appointment", b =>
+                {
+                    b.HasOne("Pufzi.Data.Database.Entities.Booking", "Booking")
+                        .WithMany("Appointments")
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Pufzi.Data.Database.Entities.Pet", "Pet")
+                        .WithMany("Appointments")
+                        .HasForeignKey("PetId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Booking");
+
+                    b.Navigation("Pet");
+                });
+
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.AppointmentService", b =>
+                {
+                    b.HasOne("Pufzi.Data.Database.Entities.Appointment", "Appointment")
+                        .WithMany("Services")
+                        .HasForeignKey("AppointmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Pufzi.Data.Database.Entities.ServicePackage", "ServicePackage")
+                        .WithMany("AppointmentServices")
+                        .HasForeignKey("ServicePackageId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Appointment");
+
+                    b.Navigation("ServicePackage");
+                });
+
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.AppointmentServiceVariant", b =>
+                {
+                    b.HasOne("Pufzi.Data.Database.Entities.AppointmentService", "AppointmentService")
+                        .WithMany("Variants")
+                        .HasForeignKey("AppointmentServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Pufzi.Data.Database.Entities.ServicePackageItemVariant", "ServicePackageItemVariant")
+                        .WithMany("AppointmentServiceVariants")
+                        .HasForeignKey("ServicePackageItemVariantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AppointmentService");
+
+                    b.Navigation("ServicePackageItemVariant");
+                });
+
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.AppointmentSlot", b =>
+                {
+                    b.HasOne("Pufzi.Data.Database.Entities.Appointment", "Appointment")
+                        .WithOne("Slot")
+                        .HasForeignKey("Pufzi.Data.Database.Entities.AppointmentSlot", "AppointmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Pufzi.Data.Database.Entities.BusinessMembership", "BusinessMembership")
+                        .WithMany("AppointmentSlots")
+                        .HasForeignKey("BusinessMembershipId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Appointment");
+
+                    b.Navigation("BusinessMembership");
+                });
+
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.Booking", b =>
+                {
+                    b.HasOne("Pufzi.Data.Database.Entities.Business", "Business")
+                        .WithMany("Bookings")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Pufzi.Data.Database.Entities.BusinessMembership", "BusinessMembership")
+                        .WithMany("Bookings")
+                        .HasForeignKey("BusinessMembershipId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Pufzi.Data.Database.Entities.User", "ReviewedByUser")
+                        .WithMany("ReviewedBookings")
+                        .HasForeignKey("ReviewedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Pufzi.Data.Database.Entities.User", "User")
+                        .WithMany("Bookings")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Business");
+
+                    b.Navigation("BusinessMembership");
+
+                    b.Navigation("ReviewedByUser");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.BookingChangeAppointment", b =>
+                {
+                    b.HasOne("Pufzi.Data.Database.Entities.Appointment", "Appointment")
+                        .WithMany("ChangeAppointments")
+                        .HasForeignKey("AppointmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Pufzi.Data.Database.Entities.BookingChangeRequest", "BookingChangeRequest")
+                        .WithMany("Appointments")
+                        .HasForeignKey("BookingChangeRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Appointment");
+
+                    b.Navigation("BookingChangeRequest");
+                });
+
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.BookingChangeRequest", b =>
+                {
+                    b.HasOne("Pufzi.Data.Database.Entities.Booking", "Booking")
+                        .WithMany("ChangeRequests")
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Pufzi.Data.Database.Entities.User", "RequestedByUser")
+                        .WithMany("RequestedBookingChanges")
+                        .HasForeignKey("RequestedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Pufzi.Data.Database.Entities.User", "ReviewedByUser")
+                        .WithMany("ReviewedBookingChanges")
+                        .HasForeignKey("ReviewedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Booking");
+
+                    b.Navigation("RequestedByUser");
+
+                    b.Navigation("ReviewedByUser");
+                });
+
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.BookingHistory", b =>
+                {
+                    b.HasOne("Pufzi.Data.Database.Entities.Booking", "Booking")
+                        .WithMany("History")
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Pufzi.Data.Database.Entities.User", "PerformedByUser")
+                        .WithMany("BookingHistoryEntries")
+                        .HasForeignKey("PerformedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Booking");
+
+                    b.Navigation("PerformedByUser");
+                });
+
             modelBuilder.Entity("Pufzi.Data.Database.Entities.BusinessImage", b =>
                 {
                     b.HasOne("Pufzi.Data.Database.Entities.Business", "Business")
@@ -1450,8 +1975,38 @@ namespace Pufzi.Data.Database.Migrations
                     b.Navigation("Pets");
                 });
 
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.Appointment", b =>
+                {
+                    b.Navigation("ChangeAppointments");
+
+                    b.Navigation("Services");
+
+                    b.Navigation("Slot");
+                });
+
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.AppointmentService", b =>
+                {
+                    b.Navigation("Variants");
+                });
+
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.Booking", b =>
+                {
+                    b.Navigation("Appointments");
+
+                    b.Navigation("ChangeRequests");
+
+                    b.Navigation("History");
+                });
+
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.BookingChangeRequest", b =>
+                {
+                    b.Navigation("Appointments");
+                });
+
             modelBuilder.Entity("Pufzi.Data.Database.Entities.Business", b =>
                 {
+                    b.Navigation("Bookings");
+
                     b.Navigation("Images");
 
                     b.Navigation("Invitations");
@@ -1467,6 +2022,10 @@ namespace Pufzi.Data.Database.Migrations
 
             modelBuilder.Entity("Pufzi.Data.Database.Entities.BusinessMembership", b =>
                 {
+                    b.Navigation("AppointmentSlots");
+
+                    b.Navigation("Bookings");
+
                     b.Navigation("LeaveBalances");
 
                     b.Navigation("LeaveRequests");
@@ -1483,12 +2042,16 @@ namespace Pufzi.Data.Database.Migrations
 
             modelBuilder.Entity("Pufzi.Data.Database.Entities.Pet", b =>
                 {
+                    b.Navigation("Appointments");
+
                     b.Navigation("Images");
                 });
 
             modelBuilder.Entity("Pufzi.Data.Database.Entities.ServicePackage", b =>
                 {
                     b.Navigation("AnimalSpecies");
+
+                    b.Navigation("AppointmentServices");
 
                     b.Navigation("Employees");
 
@@ -1505,8 +2068,17 @@ namespace Pufzi.Data.Database.Migrations
                     b.Navigation("Variants");
                 });
 
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.ServicePackageItemVariant", b =>
+                {
+                    b.Navigation("AppointmentServiceVariants");
+                });
+
             modelBuilder.Entity("Pufzi.Data.Database.Entities.User", b =>
                 {
+                    b.Navigation("BookingHistoryEntries");
+
+                    b.Navigation("Bookings");
+
                     b.Navigation("BusinessMemberships");
 
                     b.Navigation("ExternalLogins");
@@ -1514,6 +2086,12 @@ namespace Pufzi.Data.Database.Migrations
                     b.Navigation("Pets");
 
                     b.Navigation("RefreshTokens");
+
+                    b.Navigation("RequestedBookingChanges");
+
+                    b.Navigation("ReviewedBookingChanges");
+
+                    b.Navigation("ReviewedBookings");
 
                     b.Navigation("SentBusinessInvitations");
 
