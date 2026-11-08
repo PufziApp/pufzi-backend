@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using Pufzi.Api.BackgroundServices;
 using Pufzi.Api.Middleware;
 using Pufzi.Data.Database;
 using Pufzi.Infrastructure.Authentication;
@@ -10,19 +11,21 @@ using Pufzi.Infrastructure.Email;
 using Pufzi.Infrastructure.PublicHolidays;
 using Pufzi.Infrastructure.Security;
 using Pufzi.Infrastructure.Storage;
-using Pufzi.Services.AnimalSpecies;
 using Pufzi.Services.AnimalBreeds;
+using Pufzi.Services.AnimalSpecies;
 using Pufzi.Services.Auth;
+using Pufzi.Services.Bookings;
+using Pufzi.Services.Bookings.Expiration;
 using Pufzi.Services.Businesses;
 using Pufzi.Services.Leave;
 using Pufzi.Services.Pets;
+using Pufzi.Services.Salons;
 using Pufzi.Services.Schedules;
 using Pufzi.Services.ServicePackages;
 using Pufzi.Services.Team;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Threading.RateLimiting;
-using Pufzi.Services.Salons;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -247,6 +250,21 @@ builder.Services.AddScoped<
 builder.Services.AddScoped<
     ISalonPackageService,
     SalonPackageService>();
+
+builder.Services.AddScoped<
+    IAppointmentAvailabilityService,
+    AppointmentAvailabilityService>();
+
+builder.Services.AddScoped<
+    IBookingService,
+    BookingService>();
+
+builder.Services.AddScoped<
+    IBookingExpirationService,
+    BookingExpirationService>();
+
+builder.Services.AddHostedService<
+    BookingExpirationBackgroundService>();
 
 builder.Services.AddMemoryCache();
 

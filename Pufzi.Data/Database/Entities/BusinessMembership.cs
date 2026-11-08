@@ -37,4 +37,8 @@ public class BusinessMembership
     public ICollection<LeaveRequest> LeaveRequests { get; set; } = [];
 
     public ICollection<ServicePackageEmployee> ServicePackages { get; set; } = [];
+
+    public ICollection<Booking> Bookings { get; set; } = [];
+
+    public ICollection<AppointmentSlot> AppointmentSlots { get; set; } = [];
 }

@@ -55,4 +55,6 @@ public class Business
     public ICollection<BusinessWorkingHour> WorkingHours { get; set; } = [];
 
     public ICollection<BusinessScheduleException> ScheduleExceptions { get; set; } = [];
+
+    public ICollection<Booking> Bookings { get; set; } = [];
 }

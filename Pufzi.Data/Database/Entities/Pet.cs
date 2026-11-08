@@ -54,4 +54,6 @@ public class Pet
     public AnimalBreed? AnimalBreed { get; set; }
 
     public ICollection<PetImage> Images { get; set; } = [];
+
+    public ICollection<Appointment> Appointments { get; set; } = [];
 }
