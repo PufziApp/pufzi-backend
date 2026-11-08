@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using Pufzi.Api.BackgroundServices;
 using Pufzi.Api.Middleware;
 using Pufzi.Data.Database;
 using Pufzi.Infrastructure.Authentication;
@@ -14,6 +15,7 @@ using Pufzi.Services.AnimalBreeds;
 using Pufzi.Services.AnimalSpecies;
 using Pufzi.Services.Auth;
 using Pufzi.Services.Bookings;
+using Pufzi.Services.Bookings.Expiration;
 using Pufzi.Services.Businesses;
 using Pufzi.Services.Leave;
 using Pufzi.Services.Pets;
@@ -252,6 +254,17 @@ builder.Services.AddScoped<
 builder.Services.AddScoped<
     IAppointmentAvailabilityService,
     AppointmentAvailabilityService>();
+
+builder.Services.AddScoped<
+    IBookingService,
+    BookingService>();
+
+builder.Services.AddScoped<
+    IBookingExpirationService,
+    BookingExpirationService>();
+
+builder.Services.AddHostedService<
+    BookingExpirationBackgroundService>();
 
 builder.Services.AddMemoryCache();
 
