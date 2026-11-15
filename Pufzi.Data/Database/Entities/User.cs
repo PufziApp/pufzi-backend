@@ -54,4 +54,8 @@ public class User
 
     public ICollection<BookingHistory> BookingHistoryEntries
     { get; set; } = [];
+
+    public ICollection<BusinessReview> BusinessReviews { get; set; } = [];
+
+    public ICollection<BusinessReview> BusinessReviewReplies { get; set; } = [];
 }

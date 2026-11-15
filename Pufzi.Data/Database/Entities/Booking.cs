@@ -42,4 +42,6 @@ public class Booking
     public ICollection<BookingChangeRequest> ChangeRequests { get; set; } = [];
 
     public ICollection<BookingHistory> History { get; set; } = [];
+
+    public BusinessReview? Review { get; set; }
 }
