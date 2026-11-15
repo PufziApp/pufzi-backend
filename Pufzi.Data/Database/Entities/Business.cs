@@ -57,4 +57,6 @@ public class Business
     public ICollection<BusinessScheduleException> ScheduleExceptions { get; set; } = [];
 
     public ICollection<Booking> Bookings { get; set; } = [];
+
+    public ICollection<BusinessReview> Reviews { get; set; } = [];
 }

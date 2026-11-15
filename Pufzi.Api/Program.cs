@@ -17,6 +17,7 @@ using Pufzi.Services.Auth;
 using Pufzi.Services.Bookings;
 using Pufzi.Services.Bookings.Expiration;
 using Pufzi.Services.Businesses;
+using Pufzi.Services.BusinessReviews;
 using Pufzi.Services.Leave;
 using Pufzi.Services.Pets;
 using Pufzi.Services.Salons;
@@ -210,6 +211,10 @@ builder.Services.AddScoped<
 builder.Services.AddScoped<
     IBusinessAccessService,
     BusinessAccessService>();
+
+builder.Services.AddScoped<
+    IBusinessReviewService,
+    BusinessReviewService>();
 
 builder.Services.AddScoped<
     IScheduleService,
