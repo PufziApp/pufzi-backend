@@ -108,6 +108,19 @@ public class PufziDbContext : DbContext
     public DbSet<BusinessReview> BusinessReviews =>
         Set<BusinessReview>();
 
+    public DbSet<Notification> Notifications =>
+        Set<Notification>();
+
+    public DbSet<UserDevice> UserDevices =>
+        Set<UserDevice>();
+
+    public DbSet<NotificationPreference> NotificationPreferences =>
+        Set<NotificationPreference>();
+
+    public DbSet<NotificationOutbox> NotificationOutbox =>
+        Set<NotificationOutbox>();
+
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

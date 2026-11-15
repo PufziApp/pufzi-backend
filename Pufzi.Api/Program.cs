@@ -19,6 +19,7 @@ using Pufzi.Services.Bookings.Expiration;
 using Pufzi.Services.Businesses;
 using Pufzi.Services.BusinessReviews;
 using Pufzi.Services.Leave;
+using Pufzi.Services.Notifications;
 using Pufzi.Services.Pets;
 using Pufzi.Services.Salons;
 using Pufzi.Services.Schedules;
@@ -267,6 +268,10 @@ builder.Services.AddScoped<
 builder.Services.AddScoped<
     IBookingExpirationService,
     BookingExpirationService>();
+
+builder.Services.AddScoped<
+    INotificationService,
+    NotificationService>();
 
 builder.Services.AddHostedService<
     BookingExpirationBackgroundService>();
