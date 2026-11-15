@@ -105,6 +105,9 @@ public class PufziDbContext : DbContext
     public DbSet<AppointmentSlot> AppointmentSlots =>
         Set<AppointmentSlot>();
 
+    public DbSet<BusinessReview> BusinessReviews =>
+        Set<BusinessReview>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

@@ -835,6 +835,61 @@ namespace Pufzi.Data.Database.Migrations
                     b.ToTable("BusinessMemberships", (string)null);
                 });
 
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.BusinessReview", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BookingId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BusinessId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("BusinessReply")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("RepliedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("RepliedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookingId")
+                        .IsUnique();
+
+                    b.HasIndex("RepliedByUserId");
+
+                    b.HasIndex("BusinessId", "CreatedAt");
+
+                    b.HasIndex("UserId", "CreatedAt");
+
+                    b.ToTable("BusinessReviews", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_BusinessReviews_Rating", "\"Rating\" >= 1 AND \"Rating\" <= 5");
+                        });
+                });
+
             modelBuilder.Entity("Pufzi.Data.Database.Entities.BusinessScheduleException", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1730,6 +1785,40 @@ namespace Pufzi.Data.Database.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Pufzi.Data.Database.Entities.BusinessReview", b =>
+                {
+                    b.HasOne("Pufzi.Data.Database.Entities.Booking", "Booking")
+                        .WithOne("Review")
+                        .HasForeignKey("Pufzi.Data.Database.Entities.BusinessReview", "BookingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Pufzi.Data.Database.Entities.Business", "Business")
+                        .WithMany("Reviews")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Pufzi.Data.Database.Entities.User", "RepliedByUser")
+                        .WithMany("BusinessReviewReplies")
+                        .HasForeignKey("RepliedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Pufzi.Data.Database.Entities.User", "User")
+                        .WithMany("BusinessReviews")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Booking");
+
+                    b.Navigation("Business");
+
+                    b.Navigation("RepliedByUser");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Pufzi.Data.Database.Entities.BusinessScheduleException", b =>
                 {
                     b.HasOne("Pufzi.Data.Database.Entities.Business", "Business")
@@ -1996,6 +2085,8 @@ namespace Pufzi.Data.Database.Migrations
                     b.Navigation("ChangeRequests");
 
                     b.Navigation("History");
+
+                    b.Navigation("Review");
                 });
 
             modelBuilder.Entity("Pufzi.Data.Database.Entities.BookingChangeRequest", b =>
@@ -2012,6 +2103,8 @@ namespace Pufzi.Data.Database.Migrations
                     b.Navigation("Invitations");
 
                     b.Navigation("Memberships");
+
+                    b.Navigation("Reviews");
 
                     b.Navigation("ScheduleExceptions");
 
@@ -2080,6 +2173,10 @@ namespace Pufzi.Data.Database.Migrations
                     b.Navigation("Bookings");
 
                     b.Navigation("BusinessMemberships");
+
+                    b.Navigation("BusinessReviewReplies");
+
+                    b.Navigation("BusinessReviews");
 
                     b.Navigation("ExternalLogins");
 
